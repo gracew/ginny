@@ -74,7 +74,7 @@ export default function Home() {
           <Form.Label>Monthly Pet Rent (optional)</Form.Label>
           <Form.Control
             type="number"
-            value={parkingFee}
+            value={petRent}
             onChange={e => setPetRent(Number(e.target.value))}
           ></Form.Control>
 
