@@ -63,20 +63,6 @@ export default function Home() {
             onChange={e => setMonthlyRent(Number(e.target.value))}
           ></Form.Control>
 
-          <Form.Label>Monthly Pet Rent</Form.Label>
-          <Form.Control
-            type="number"
-            value={parkingFee}
-            onChange={e => setPetRent(Number(e.target.value))}
-          ></Form.Control>
-
-          <Form.Label>Parking Fee</Form.Label>
-          <Form.Control
-            type="number"
-            value={parkingFee}
-            onChange={e => setParkingFee(Number(e.target.value))}
-          ></Form.Control>
-
           <Form.Label>Move-in Date</Form.Label>
           <Form.Control
             required
@@ -85,11 +71,26 @@ export default function Home() {
             onChange={e => setMoveInDate(e.target.value)}
           ></Form.Control>
 
+          <Form.Label>Monthly Pet Rent (optional)</Form.Label>
+          <Form.Control
+            type="number"
+            value={parkingFee}
+            onChange={e => setPetRent(Number(e.target.value))}
+          ></Form.Control>
+
+          <Form.Label>Parking Fee (optional)</Form.Label>
+          <Form.Control
+            type="number"
+            value={parkingFee}
+            onChange={e => setParkingFee(Number(e.target.value))}
+          ></Form.Control>
           <Button type="submit">
             Generate!
             {loading && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
           </Button>
         </Form>
+
+        {downloadUrl && <Button href={downloadUrl}>Download</Button>}
 
         <div className={styles.grid}>
         </div>
