@@ -36,8 +36,6 @@ export default async function handler(
 
   const moveInDate = moment(req.body.moveInDate);
   const lastDayMonth = moveInDate.clone().endOf("month");
-  console.log(moveInDate.format("YYYY-MM-DD"));
-  console.log(lastDayMonth.format("YYYY-MM-DD"));
   const prorateAmount = (lastDayMonth.diff(moveInDate, "days") + 1) / lastDayMonth.daysInMonth();
   const proratedRent = round(prorateAmount * req.body.monthlyRent);
 
