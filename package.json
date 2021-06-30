@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^1.13.1",
     "@google-cloud/storage": "^5.8.5",
     "bootstrap": "^5.0.2",
     "jszip": "^3.6.0",
