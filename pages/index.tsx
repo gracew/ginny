@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import Head from 'next/head';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import styles from '../styles/Home.module.css';
@@ -39,12 +40,13 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Before Move In</title>
+        <title>Generate with Ginny</title>
         <meta name="description" content="The easiest way to generate reservation agreements and approval letters." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
+        <Link href="/property/new">New Property</Link>
         <h3>Generate a reservation agreement in 2 seconds.</h3>
 
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
