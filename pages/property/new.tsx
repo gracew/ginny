@@ -1,13 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import styles from '../../styles/Home.module.css';
 
 export default function Home() {
-  const [address, setAddress] = useState<string>();
-  const [city, setCity] = useState<string>();
-  const [state, setState] = useState<string>();
-  const [zip, setZip] = useState<string>();
+  const router = useRouter();
+
+  const [address, setAddress] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [state, setState] = useState<string>("");
+  const [zip, setZip] = useState<string>("");
 
   const [applicationFee, setApplicationFee] = useState<number>();
   const [reservationFee, setReservationFee] = useState<number>();
@@ -15,7 +18,7 @@ export default function Home() {
   const [parkingFee, setParkingFee] = useState<number>();
   const [petFee, setPetFee] = useState<number>();
 
-  const [customText, setCustomText] = useState<string>();
+  const [customText, setCustomText] = useState<string>("");
 
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,13 +31,24 @@ export default function Home() {
       setValidated(true);
     } else {
       setLoading(true);
-      const res = await fetch("/api/generate", {
+      await fetch("/api/addProperty", {
         method: 'post',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ aptNo: address, monthlyRent: applicationFee, parkingFee: adminFee, petFee: reservationFee, moveInDate: customText })
-      })
-      const parsed = await res.json();
+        body: JSON.stringify({
+          address,
+          city,
+          state,
+          zip,
+          applicationFee,
+          reservationFee,
+          adminFee,
+          parkingFee,
+          petFee,
+          customText,
+        }),
+      });
       setLoading(false);
+      router.push("/");
     }
   }
 
@@ -78,7 +92,6 @@ export default function Home() {
           <h4>Fees</h4>
           <Form.Label>Application Fee</Form.Label>
           <Form.Control
-            required
             type="number"
             value={applicationFee}
             onChange={e => setApplicationFee(Number(e.target.value))}
@@ -86,7 +99,6 @@ export default function Home() {
 
           <Form.Label>Reservation Fee</Form.Label>
           <Form.Control
-            required
             type="number"
             value={reservationFee}
             onChange={e => setReservationFee(Number(e.target.value))}
@@ -116,7 +128,7 @@ export default function Home() {
 
         <Form.Group>
           <h4>Customizations</h4>
-          
+
           <Form.Label>Custom Text</Form.Label>
           <Form.Control
             value={customText}
