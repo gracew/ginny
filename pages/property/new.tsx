@@ -3,22 +3,23 @@ import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import styles from '../../styles/Home.module.css';
+import DollarInput from '../dollarInput';
 
 export default function Home() {
   const router = useRouter();
 
-  const [address, setAddress] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [state, setState] = useState<string>("");
-  const [zip, setZip] = useState<string>("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
 
-  const [applicationFee, setApplicationFee] = useState<number>();
-  const [reservationFee, setReservationFee] = useState<number>();
-  const [adminFee, setAdminFee] = useState<number>();
-  const [parkingFee, setParkingFee] = useState<number>();
-  const [petFee, setPetFee] = useState<number>();
+  const [applicationFee, setApplicationFee] = useState("");
+  const [reservationFee, setReservationFee] = useState("");
+  const [adminFee, setAdminFee] = useState("");
+  const [parkingFee, setParkingFee] = useState("");
+  const [petFee, setPetFee] = useState("");
 
-  const [customText, setCustomText] = useState<string>("");
+  const [customText, setCustomText] = useState("");
 
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -91,39 +92,19 @@ export default function Home() {
         <Form.Group>
           <h4>Fees</h4>
           <Form.Label>Application Fee</Form.Label>
-          <Form.Control
-            type="number"
-            value={applicationFee}
-            onChange={e => setApplicationFee(Number(e.target.value))}
-          ></Form.Control>
+          <DollarInput value={applicationFee} setValue={setApplicationFee} />
 
           <Form.Label>Reservation Fee</Form.Label>
-          <Form.Control
-            type="number"
-            value={reservationFee}
-            onChange={e => setReservationFee(Number(e.target.value))}
-          ></Form.Control>
+          <DollarInput value={reservationFee} setValue={setReservationFee} />
 
           <Form.Label>Admin/amenity Fee</Form.Label>
-          <Form.Control
-            type="number"
-            value={adminFee}
-            onChange={e => setAdminFee(Number(e.target.value))}
-          ></Form.Control>
+          <DollarInput value={adminFee} setValue={setAdminFee} />
 
           <Form.Label>Parking Fee</Form.Label>
-          <Form.Control
-            type="number"
-            value={parkingFee}
-            onChange={e => setParkingFee(Number(e.target.value))}
-          ></Form.Control>
+          <DollarInput value={parkingFee} setValue={setParkingFee} />
 
           <Form.Label>Pet Fee</Form.Label>
-          <Form.Control
-            type="number"
-            value={petFee}
-            onChange={e => setPetFee(Number(e.target.value))}
-          ></Form.Control>
+          <DollarInput value={petFee} setValue={setPetFee} />
         </Form.Group>
 
         <Form.Group>

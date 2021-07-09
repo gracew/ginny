@@ -1,7 +1,6 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Spinner } from 'react-bootstrap';
-import { PencilFill, PlusCircleFill, PlusLg } from 'react-bootstrap-icons';
+import { Button, Spinner } from 'react-bootstrap';
+import { PlusLg } from 'react-bootstrap-icons';
 import styles from '../styles/Properties.module.css';
 
 

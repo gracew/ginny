@@ -1,13 +1,13 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
+import DollarInput from './dollarInput';
 
 export default function GenerateReservationAgreement() {
-  const [aptNo, setAptNo] = useState<string>();
-  const [monthlyRent, setMonthlyRent] = useState<number>();
-  const [petRent, setPetRent] = useState<number>();
-  const [parkingFee, setParkingFee] = useState<number>();
+  const [aptNo, setAptNo] = useState("");
+  const [monthlyRent, setMonthlyRent] = useState("");
+  const [petRent, setPetRent] = useState("");
+  const [parkingFee, setParkingFee] = useState("");
   const [moveInDate, setMoveInDate] = useState(moment().format("yyyy-MM-DD"));
 
   const [validated, setValidated] = useState(false);
@@ -46,12 +46,7 @@ export default function GenerateReservationAgreement() {
         ></Form.Control>
 
         <Form.Label>Monthly Rent</Form.Label>
-        <Form.Control
-          required
-          type="number"
-          value={monthlyRent}
-          onChange={e => setMonthlyRent(Number(e.target.value))}
-        ></Form.Control>
+        <DollarInput value={monthlyRent} setValue={setMonthlyRent} />
 
         <Form.Label>Move-in Date</Form.Label>
         <Form.Control
@@ -62,18 +57,11 @@ export default function GenerateReservationAgreement() {
         ></Form.Control>
 
         <Form.Label>Monthly Pet Rent (optional)</Form.Label>
-        <Form.Control
-          type="number"
-          value={petRent}
-          onChange={e => setPetRent(Number(e.target.value))}
-        ></Form.Control>
+        <DollarInput value={petRent} setValue={setPetRent} />
 
         <Form.Label>Parking Fee (optional)</Form.Label>
-        <Form.Control
-          type="number"
-          value={parkingFee}
-          onChange={e => setParkingFee(Number(e.target.value))}
-        ></Form.Control>
+        <DollarInput value={parkingFee} setValue={setParkingFee} />
+
         <Button type="submit">
           Generate!
           {loading && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
