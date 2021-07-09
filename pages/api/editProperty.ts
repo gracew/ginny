@@ -6,9 +6,18 @@ async function handler(
   req: RequireSessionProp<NextApiRequest>,
   res: NextApiResponse
 ) {
-  const query = "insert into properties(user_id, address, city, state, zip, application_fee, reservation_fee, admin_fee, parking_fee, pet_fee, custom_text) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
+  const pgRes = await client.query("select * from properties where id = $1", [req.body.id]);
+  if (pgRes.rows.length === 0) {
+    res.status(404).end();
+    return;
+  }
+  if (pgRes.user_id !== req.session.userId) {
+    res.status(403).end();
+    return;
+  }
+
+  const query = "update properties set address = $1, city = $2, state = $3, zip = $4, application_fee = $5, reservation_fee = $6, admin_fee = $7, parking_fee = $8, pet_fee = $9, custom_text = $10 where id = $11";
   await client.query(query, [
-    req.session.userId,
     req.body.address,
     req.body.city,
     req.body.state,
@@ -19,6 +28,7 @@ async function handler(
     req.body.parkingFee,
     req.body.petFee,
     req.body.customText,
+    req.body.id,
   ]);
   res.status(200).end();
 }
