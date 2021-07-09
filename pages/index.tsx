@@ -1,15 +1,38 @@
-import React from 'react';
-import { Badge, Col, Nav, Row, Tab } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Badge, Button, Col, Nav, Row, Spinner, Tab } from 'react-bootstrap';
 import styles from '../styles/Home.module.css';
 import GenerateReservationAgreement from '../components/generate';
 import Properties from '../components/properties';
+import { useRouter } from 'next/dist/client/router';
+import { PlusLg } from 'react-bootstrap-icons';
 
 
 export default function Home() {
+  const router = useRouter();
+  const [properties, setProperties] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/getProperties").then(res => res.json()).then(parsed => {
+      setProperties(parsed);
+      setLoading(false);
+    });
+  }, [])
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <Properties />
+
+        <h4>Properties</h4>
+        {loading && <Spinner animation="grow" />}
+        {!loading && <div className={styles.grid}>
+          {properties.map((p: any) =>
+            <Button key={p.id} variant="outline-primary" onClick={() => router.push(`/property/${p.id}`)}>
+              {p.address}
+            </Button>)}
+          <Button onClick={() => router.push("/property/new")}><PlusLg /></Button>
+        </div>}
+
         <h4 className={styles.generateHeader}>Generate documents for your property in seconds.</h4>
         <Tab.Container defaultActiveKey="reservation">
           <Row>
@@ -29,7 +52,7 @@ export default function Home() {
             <Col sm={9}>
               <Tab.Content>
                 <Tab.Pane eventKey="reservation">
-                  <GenerateReservationAgreement />
+                  <GenerateReservationAgreement properties={properties} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="approval">
                 </Tab.Pane>

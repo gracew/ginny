@@ -3,8 +3,14 @@ import React, { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import styles from '../styles/Generate.module.css';
 import DollarInput from './dollarInput';
+import { Property } from './propertyForm';
 
-export default function GenerateReservationAgreement() {
+interface GenerateReservationAgreeementProps {
+  properties: Property[];
+}
+
+export default function GenerateReservationAgreement(props: GenerateReservationAgreeementProps) {
+  const [property, setProperty] = useState<Property>();
   const [aptNo, setAptNo] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
   const [petRent, setPetRent] = useState("");
@@ -39,6 +45,13 @@ export default function GenerateReservationAgreement() {
     <div className={styles.generateContainer}>
 
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>Property</Form.Label>
+          <Form.Control as="select" value={property?.id} onChange={setProperty}>
+            {props.properties.map(p => <option value={p}>{p.address}</option>)}
+          </Form.Control>
+        </Form.Group>
+
         <Form.Group>
           <Form.Label>Apartment #</Form.Label>
           <Form.Control

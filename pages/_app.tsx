@@ -9,8 +9,8 @@ import type { AppProps } from 'next/app';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import React from 'react';
-import '../styles/globals.css';
 import GNavbar from '../components/navbar';
+import '../styles/globals.css';
 
 const clerkFrontendApi = process.env.NEXT_PUBLIC_CLERK_FRONTEND_API;
 
@@ -22,8 +22,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   >
     <>
       <Head>
-        <title>Generate with Ginny</title>
-        <meta name="description" content="The easiest way to generate reservation agreements and approval letters." />
+        <title>Meet Ginny | Generate Property Management Documents</title>
+        <meta name="description" content="The easiest way to generate documents for your property." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

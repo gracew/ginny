@@ -1,10 +1,9 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
 import PropertyForm, { Property } from '../../components/propertyForm';
 import styles from '../../styles/Home.module.css';
 
-export default function NewProperty() {
+export default function NewProperty(){
   const router = useRouter();
 
   const [property, setProperty] = useState({});

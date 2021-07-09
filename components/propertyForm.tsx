@@ -1,7 +1,6 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/dist/client/router';
 import React from 'react';
-import { Button, ButtonToolbar, Form, Spinner } from 'react-bootstrap';
+import { Button, Form, Spinner } from 'react-bootstrap';
 import DollarInput from './dollarInput';
 
 export interface Property {
