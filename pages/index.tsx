@@ -10,7 +10,7 @@ export default function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <Properties />
-        <h4>Generate documents for your property in seconds.</h4>
+        <h4 className={styles.generateHeader}>Generate documents for your property in seconds.</h4>
         <Tab.Container defaultActiveKey="reservation">
           <Row>
             <Col sm={3}>

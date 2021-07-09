@@ -6,19 +6,15 @@
   align-items: center;
 }
 
-.navbar {
-  width: 100%;
-}
-
-.feedbackButton {
-  margin-right: 15px;
-}
-
 .main {
   padding: 3rem 0;
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.generateHeader {
+  margin-bottom: 20px;
 }
 
 .footer {
