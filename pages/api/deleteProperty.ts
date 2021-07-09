@@ -16,20 +16,8 @@ async function handler(
     return;
   }
 
-  const query = "update properties set address = $1, city = $2, state = $3, zip = $4, application_fee = $5, reservation_fee = $6, admin_fee = $7, parking_fee = $8, pet_fee = $9, custom_text = $10 where id = $11";
-  await client.query(query, [
-    req.body.address,
-    req.body.city,
-    req.body.state,
-    req.body.zip,
-    req.body.application_fee,
-    req.body.reservation_fee,
-    req.body.admin_fee,
-    req.body.parking_fee,
-    req.body.pet_fee,
-    req.body.custom_text,
-    req.body.id,
-  ]);
+  const query = "delete from properties where id = $1";
+  await client.query(query, [ req.body.id ]);
   res.status(200).end();
 }
 

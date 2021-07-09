@@ -1,8 +1,8 @@
 import React from 'react';
 import { Badge, Col, Nav, Row, Tab } from 'react-bootstrap';
 import styles from '../styles/Home.module.css';
-import GenerateReservationAgreement from './generate';
-import Properties from './properties';
+import GenerateReservationAgreement from '../components/generate';
+import Properties from '../components/properties';
 
 
 export default function Home() {

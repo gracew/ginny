@@ -1,5 +1,6 @@
+CREATE EXTENSION pgcrypto;
 CREATE TABLE properties (
-    id SERIAL NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id text not null,
     address text NOT NULL,
     city text NOT NULL,
@@ -12,5 +13,4 @@ CREATE TABLE properties (
     pet_fee decimal,
     custom_text text
 );
-ALTER TABLE ONLY properties ADD CONSTRAINT pk_properties_id PRIMARY KEY (id);
 CREATE INDEX idx_properties_user_id ON properties (user_id);

@@ -18,21 +18,13 @@ export default function Properties() {
     });
   }, [])
 
-  async function deleteProperty(id: string) {
-    fetch("/api/deleteProperties").then(res => res.json()).then(parsed => {
-      setProperties(parsed);
-      setLoading(false);
-    });
-  }
-
   return (
     <div>
       <h4>Properties</h4>
       {loading && <Spinner animation="grow" />}
-      {!loading && properties.length === 0 && <div>No properties yet</div>}
-      {!loading && properties.length > 0 && <div className={styles.grid}>
+      {!loading && <div className={styles.grid}>
         {properties.map((p: any) =>
-          <Button key={p.id} variant="outline-primary">
+          <Button key={p.id} variant="outline-primary" onClick={() => router.push(`/property/${p.id}`)}>
             {p.address}
           </Button>)}
         <Button onClick={() => router.push("/property/new")}><PlusLg /></Button>

@@ -13,12 +13,12 @@ async function handler(
     req.body.city,
     req.body.state,
     req.body.zip,
-    req.body.applicationFee,
-    req.body.reservationFee,
-    req.body.adminFee,
-    req.body.parkingFee,
-    req.body.petFee,
-    req.body.customText,
+    req.body.application_fee,
+    req.body.reservation_fee,
+    req.body.admin_fee,
+    req.body.parking_fee,
+    req.body.pet_fee,
+    req.body.custom_text,
   ]);
   res.status(200).end();
 }
