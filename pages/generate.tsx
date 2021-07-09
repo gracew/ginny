@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 
-export default function Generate() {
+export default function GenerateReservationAgreement() {
   const [aptNo, setAptNo] = useState<string>();
   const [monthlyRent, setMonthlyRent] = useState<number>();
   const [petRent, setPetRent] = useState<number>();
@@ -36,7 +36,6 @@ export default function Generate() {
 
   return (
     <div>
-      <h3>Generate a reservation agreement in 2 seconds.</h3>
 
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Label>Apartment #</Form.Label>
