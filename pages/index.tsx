@@ -1,8 +1,5 @@
-import { UserButton } from '@clerk/clerk-react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Head from 'next/head';
 import React from 'react';
-import { Badge, Button, Col, Nav, Navbar, Row, Tab } from 'react-bootstrap';
+import { Badge, Col, Nav, Row, Tab } from 'react-bootstrap';
 import styles from '../styles/Home.module.css';
 import GenerateReservationAgreement from './generate';
 import Properties from './properties';
@@ -11,25 +8,6 @@ import Properties from './properties';
 export default function Home() {
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Generate with Ginny</title>
-        <meta name="description" content="The easiest way to generate reservation agreements and approval letters." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <Navbar bg="light" className={styles.navbar}>
-        <Navbar.Brand>Generate with Ginny</Navbar.Brand>
-        <Navbar.Toggle />
-        <Navbar.Collapse className="justify-content-end">
-          <Button
-            variant="outline-primary"
-            size="sm"
-            className={styles.feedbackButton}
-            href="mailto:hello@meetginny.com">Feedback?</Button>
-          <UserButton />
-        </Navbar.Collapse>
-      </Navbar>
-
       <main className={styles.main}>
         <Properties />
         <h4>Generate documents for your property in seconds.</h4>
