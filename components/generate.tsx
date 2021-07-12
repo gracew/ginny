@@ -14,7 +14,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
   const [aptNo, setAptNo] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
   const [petRent, setPetRent] = useState("");
-  const [parkingFee, setParkingFee] = useState("");
+  const [parking, setParking] = useState("");
   const [moveInDate, setMoveInDate] = useState(moment().format("yyyy-MM-DD"));
 
   const [validated, setValidated] = useState(false);
@@ -33,7 +33,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
       const res = await fetch("/api/generate", {
         method: 'post',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ aptNo, monthlyRent, parkingFee, petFee: petRent, moveInDate })
+        body: JSON.stringify({ aptNo, monthlyRent, parking, petRent, moveInDate })
       })
       const parsed = await res.json();
       setDownloadUrl(parsed.downloadUrl);
@@ -62,11 +62,6 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Monthly Rent</Form.Label>
-          <DollarInput value={monthlyRent} setValue={setMonthlyRent} />
-        </Form.Group>
-
-        <Form.Group>
           <Form.Label>Move-in Date</Form.Label>
           <Form.Control
             required
@@ -77,13 +72,23 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Monthly Pet Rent (optional)</Form.Label>
+          <Form.Label>Monthly Rent</Form.Label>
+          <DollarInput value={monthlyRent} setValue={setMonthlyRent} />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Monthly Parking</Form.Label>
+          <DollarInput value={parking} setValue={setParking} />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Monthly Storage Rent</Form.Label>
           <DollarInput value={petRent} setValue={setPetRent} />
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Parking Fee (optional)</Form.Label>
-          <DollarInput value={parkingFee} setValue={setParkingFee} />
+          <Form.Label>Monthly Pet Rent</Form.Label>
+          <DollarInput value={petRent} setValue={setPetRent} />
         </Form.Group>
 
         <Button type="submit">

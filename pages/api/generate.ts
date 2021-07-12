@@ -56,12 +56,12 @@ export default async function handler(
     newStream = newStream.pipe(replace("PRORATED_PET_RENT", "N/A"));
   }
 
-  if (req.body.parkingFee) {
-    const proratedParkingFee = round(prorateAmount * req.body.parkingFee);
-    moveInAmountDue += proratedParkingFee;
-    newStream = newStream.pipe(replace("PRORATED_PARKING_FEE", proratedParkingFee));
+  if (req.body.parking) {
+    const proratedParking = round(prorateAmount * req.body.parking);
+    moveInAmountDue += proratedParking;
+    newStream = newStream.pipe(replace("PRORATED_PARKING", proratedParking));
   } else {
-    newStream = newStream.pipe(replace("PRORATED_PARKING_FEE", "N/A"));
+    newStream = newStream.pipe(replace("PRORATED_PARKING", "N/A"));
   }
 
   // TODO(gracew): generalize this for more templates...

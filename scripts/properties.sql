@@ -9,7 +9,7 @@ CREATE TABLE properties (
     application_fee decimal,
     reservation_fee decimal,
     admin_fee decimal,
-    parking_fee decimal,
+    trash_fee decimal,
     pet_fee decimal,
     custom_text text
 );

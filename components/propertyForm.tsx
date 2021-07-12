@@ -12,7 +12,7 @@ export interface Property {
   application_fee?: number;
   reservation_fee?: number;
   admin_fee?: number;
-  parking_fee?: number;
+  trash_fee?: number;
   pet_fee?: number;
   custom_text?: string;
 }
@@ -79,13 +79,13 @@ export default function PropertyForm(props: PropertyFormProps) {
       </Form.Group>
 
       <Form.Group>
-        <Form.Label>Admin/amenity Fee</Form.Label>
+        <Form.Label>Admin/Amenity Fee</Form.Label>
         <DollarInput value={props.property.admin_fee} setValue={v => props.update({ admin_fee: Number(v) })} />
       </Form.Group>
 
       <Form.Group>
-        <Form.Label>Parking Fee</Form.Label>
-        <DollarInput value={props.property.parking_fee} setValue={v => props.update({ parking_fee: Number(v) })} />
+        <Form.Label>Trash Fee</Form.Label>
+        <DollarInput value={props.property.trash_fee} setValue={v => props.update({ trash_fee: Number(v) })} />
       </Form.Group>
 
       <Form.Group>
