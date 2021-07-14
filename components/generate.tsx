@@ -31,7 +31,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
     if (props.properties.length > 0) {
       setProperty(props.properties[0]);
     }
-  })
+  }, [props.properties]);
 
   async function handleSubmit(e: any) {
     const form = e.currentTarget;
