@@ -13,7 +13,6 @@ export interface Property {
   reservation_fee?: number;
   admin_fee?: number;
   trash_fee?: number;
-  pet_fee?: number;
   custom_text?: string;
 }
 
@@ -88,11 +87,6 @@ export default function PropertyForm(props: PropertyFormProps) {
         <DollarInput value={props.property.trash_fee} setValue={v => props.update({ trash_fee: Number(v) })} />
       </Form.Group>
 
-      <Form.Group>
-        <Form.Label>Pet Fee</Form.Label>
-        <DollarInput value={props.property.pet_fee} setValue={v => props.update({ pet_fee: Number(v) })} />
-      </Form.Group>
-
       <h4>Customizations</h4>
       <Form.Group>
         <Form.Label>Custom Text</Form.Label>
@@ -101,11 +95,11 @@ export default function PropertyForm(props: PropertyFormProps) {
           as="textarea"
           rows={6}
           onChange={e => props.update({ custom_text: e.target.value })}
-        ></Form.Control>
+        />
       </Form.Group>
 
       <Form.Group>
-        Need more customizations? Contact us at <a href="mailto:hello@meetginny.com">hello@meetginny.com</a>.
+        Need more customizations? Contact us at <a href="mailto:hello@tryginny.com">hello@tryginny.com</a>.
       </Form.Group>
 
       <Button type="submit">

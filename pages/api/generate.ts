@@ -17,15 +17,16 @@ type Data = {
   downloadUrl: string
 }
 
-const storage = new Storage();
+const gcs = new Storage();
+const templateFilename = "reservation_agreement_template_2021-07-13.docx";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
   // download template from GCS
-  const tempPath = path.join(os.tmpdir(), "falls_green_reservation_agreement.docx");
-  await storage.bucket("bmi-templates").file("falls_green_reservation_agreement.docx").download({ destination: tempPath });
+  const tempPath = path.join(os.tmpdir(), templateFilename);
+  await gcs.bucket("bmi-templates").file(templateFilename).download({ destination: tempPath });
   const fileData = fs.readFileSync(tempPath);
   const zip = await JSZip.loadAsync(fileData);
   var xml = zip.file("word/document.xml")
@@ -34,41 +35,59 @@ export default async function handler(
     return;
   }
 
-  const moveInDate = moment(req.body.moveInDate);
-  const lastDayMonth = moveInDate.clone().endOf("month");
-  const prorateAmount = (lastDayMonth.diff(moveInDate, "days") + 1) / lastDayMonth.daysInMonth();
-  const proratedRent = round(prorateAmount * req.body.monthlyRent);
+  const {
+    property, aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
+  } = req.body;
 
-  // TODO(gracew): generalize this for more templates...
-  let moveInAmountDue = 400 + proratedRent;
+  const moveInDateMoment = moment(moveInDate);
+  const lastDayMonth = moveInDateMoment.clone().endOf("month");
+  const prorateAmount = (lastDayMonth.diff(moveInDateMoment, "days") + 1) / lastDayMonth.daysInMonth();
+  const proratedRent = round(prorateAmount * monthlyRent);
+
+  const applicationAmountDue = property.application_fee || property.reservation_fee
+    ? (property.application_fee || 0) + (property.reservation_fee || 0)
+    : undefined;
+  const fullAddress = `${property.address}, ${property.city}, ${property.state}  ${property.zip}`;
 
   let newStream = xml.nodeStream()
-    .pipe(replace("APT_NO", req.body.aptNo))
-    .pipe(replace("MONTHLY_RENT", req.body.monthlyRent))
-    .pipe(replace("FIRST_MONTH_DATES", `${moveInDate.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`))
+    .pipe(replace("PROPERTY_ADDRESS", fullAddress))
+    .pipe(replace("APT_NO", aptNo))
+    .pipe(replace("MONTHLY_RENT", monthlyRent))
+    .pipe(replace("LEASE_TERM", `${leaseTermMonths} months`))
+    .pipe(replace("APPLICATION_FEE", property.application_fee || "N/A"))
+    .pipe(replace("RESERVATION_FEE", property.reservation_fee || "N/A"))
+    .pipe(replace("APPLICATION_AMOUNT_DUE", applicationAmountDue || "N/A"))
+    .pipe(replace("FIRST_MONTH_DATES", `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`))
     .pipe(replace("PRORATED_RENT", proratedRent));
 
-  if (req.body.petRent) {
-    const proratedPetRent = round(prorateAmount * req.body.petRent);
-    moveInAmountDue += proratedPetRent;
-    newStream = newStream.pipe(replace("PRORATED_PET_RENT", proratedPetRent));
-  } else {
-    newStream = newStream.pipe(replace("PRORATED_PET_RENT", "N/A"));
+  const optionalRents = {
+    PRORATED_PARKING: parking,
+    PRORATED_STORAGE: storage,
+    PRORATED_TRASH: property.trash_fee,
+    PRORATED_PET_RENT: petRent,
   }
 
-  if (req.body.parking) {
-    const proratedParking = round(prorateAmount * req.body.parking);
-    moveInAmountDue += proratedParking;
-    newStream = newStream.pipe(replace("PRORATED_PARKING", proratedParking));
-  } else {
-    newStream = newStream.pipe(replace("PRORATED_PARKING", "N/A"));
-  }
+  let moveInAmountDue = proratedRent;
+  Object.entries(optionalRents).forEach(([key, monthlyRent]) => {
+    if (monthlyRent) {
+      const proratedRent = round(prorateAmount * monthlyRent);
+      moveInAmountDue += proratedRent;
+      newStream = newStream.pipe(replace(key, proratedRent));
+    } else {
+      newStream = newStream.pipe(replace(key, "N/A"));
+    }
+  });
 
-  // TODO(gracew): generalize this for more templates...
-  const total = moveInAmountDue + 400;
+  moveInAmountDue += petFee || 0;
+  newStream = newStream.pipe(replace("PET_FEE", petFee || "N/A"));
+
+  moveInAmountDue += property.admin_fee || 0;
+  newStream = newStream.pipe(replace("ADMIN_FEE", property.admin_fee || "N/A"));
+
   newStream = newStream
-    .pipe(replace("AMOUNT_DUE", moveInAmountDue))
-    .pipe(replace("TOTAL", total));
+    .pipe(replace("MOVEIN_AMOUNT_DUE", round(moveInAmountDue)))
+    .pipe(replace("CUSTOM_TEXT", property.custom_text || ""))
+    .pipe(replace("CONCESSIONS", concessions || ""));
 
   zip.file("word/document.xml", newStream);
   const outFileName = uuidv4() + ".docx";
@@ -76,7 +95,7 @@ export default async function handler(
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))
     .on("finish", async function () {
-      await storage.bucket("bmi-templates").upload(outPath, { destination: "out/" + outFileName });
+      await gcs.bucket("bmi-templates").upload(outPath, { destination: "out/" + outFileName });
       // upload to GCS
       res.status(200).json({ downloadUrl: 'https://storage.googleapis.com/bmi-templates/out/' + outFileName })
     })

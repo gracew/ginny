@@ -21,7 +21,7 @@ export default function GNavbar() {
           variant="outline-primary"
           size="sm"
           className={styles.feedbackButton}
-          href="mailto:hello@meetginny.com">Feedback?</Button>
+          href="mailto:hello@tryginny.com">Feedback?</Button>
         <UserButton />
       </Navbar.Collapse>
     </Navbar>

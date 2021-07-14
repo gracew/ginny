@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   >
     <>
       <Head>
-        <title>Meet Ginny | Generate Property Management Documents</title>
+        <title>Ginny | Generate Property Management Documents</title>
         <meta name="description" content="The easiest way to generate documents for your property." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
