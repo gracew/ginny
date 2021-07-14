@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Badge, Button, Col, Nav, Row, Spinner, Tab } from 'react-bootstrap';
 import styles from '../styles/Home.module.css';
 import GenerateReservationAgreement from '../components/generate';
-import Properties from '../components/properties';
 import { useRouter } from 'next/dist/client/router';
 import { PlusLg } from 'react-bootstrap-icons';
 
@@ -24,7 +23,7 @@ export default function Home() {
       <main className={styles.main}>
 
         <h4>Properties</h4>
-        {loading && <Spinner animation="grow" />}
+        {loading && <Spinner className={styles.propertiesSpinner} animation="grow" />}
         {!loading && <div className={styles.grid}>
           {properties.map((p: any) =>
             <Button key={p.id} variant="outline-primary" onClick={() => router.push(`/property/${p.id}`)}>

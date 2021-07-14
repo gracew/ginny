@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
+import { Download } from 'react-bootstrap-icons';
 import styles from '../styles/Generate.module.css';
 import DollarInput from './dollarInput';
 import { Property } from './propertyForm';
@@ -40,6 +41,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
     if (form.checkValidity() === false) {
       setValidated(true);
     } else {
+      setValidated(false);
       setLoading(true);
       const res = await fetch("/api/generate", {
         method: 'post',
@@ -60,8 +62,12 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Group>
           <Form.Label>Property</Form.Label>
-          <Form.Control as="select" value={property?.id} onChange={setProperty}>
-            {props.properties.map(p => <option value={p}>{p.address}</option>)}
+          <Form.Control
+            as="select"
+            value={property?.id}
+            onChange={e => setProperty(props.properties.find(p => p.id === e.target.value))}
+          >
+            {props.properties.map(p => <option key={p.id} value={p.id}>{p.address}</option>)}
           </Form.Control>
         </Form.Group>
 
@@ -96,7 +102,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
 
         <Form.Group>
           <Form.Label>Monthly Rent</Form.Label>
-          <DollarInput value={monthlyRent} setValue={setMonthlyRent} />
+          <DollarInput required value={monthlyRent} setValue={setMonthlyRent} />
         </Form.Group>
 
         <Form.Group>
@@ -131,11 +137,11 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
 
         <Button type="submit">
           Generate!
-          {loading && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
+          {loading && <Spinner style={{ marginLeft: "10px" }} as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
         </Button>
+        {downloadUrl && <Button className={styles.downloadButton} href={downloadUrl} variant="success"><Download /></Button>}
       </Form>
 
-      {downloadUrl && <Button href={downloadUrl}>Download</Button>}
     </div>
   )
 }

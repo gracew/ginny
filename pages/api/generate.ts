@@ -9,8 +9,8 @@ import path from "path";
 import replace from "string-replace-stream";
 import { v4 as uuidv4 } from "uuid";
 
-function round(x: number) {
-  return Math.round(x * 100) / 100;
+function formatAmount(x: number) {
+  return new Intl.NumberFormat("en-US").format(x);
 }
 
 type Data = {
@@ -42,7 +42,7 @@ export default async function handler(
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
   const prorateAmount = (lastDayMonth.diff(moveInDateMoment, "days") + 1) / lastDayMonth.daysInMonth();
-  const proratedRent = round(prorateAmount * monthlyRent);
+  const proratedRent = prorateAmount * monthlyRent;
 
   const applicationAmountDue = property.application_fee || property.reservation_fee
     ? (property.application_fee || 0) + (property.reservation_fee || 0)
@@ -52,13 +52,13 @@ export default async function handler(
   let newStream = xml.nodeStream()
     .pipe(replace("PROPERTY_ADDRESS", fullAddress))
     .pipe(replace("APT_NO", aptNo))
-    .pipe(replace("MONTHLY_RENT", monthlyRent))
+    .pipe(replace("MONTHLY_RENT", formatAmount(monthlyRent)))
     .pipe(replace("LEASE_TERM", `${leaseTermMonths} months`))
-    .pipe(replace("APPLICATION_FEE", property.application_fee || "N/A"))
-    .pipe(replace("RESERVATION_FEE", property.reservation_fee || "N/A"))
-    .pipe(replace("APPLICATION_AMOUNT_DUE", applicationAmountDue || "N/A"))
+    .pipe(replace("APPLICATION_FEE", property.application_fee ? formatAmount(property.application_fee) : "N/A"))
+    .pipe(replace("RESERVATION_FEE", property.reservation_fee ? formatAmount(property.reservation_fee) : "N/A"))
+    .pipe(replace("APPLICATION_AMOUNT_DUE", applicationAmountDue ? formatAmount(applicationAmountDue) :  "N/A"))
     .pipe(replace("FIRST_MONTH_DATES", `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`))
-    .pipe(replace("PRORATED_RENT", proratedRent));
+    .pipe(replace("PRORATED_RENT", formatAmount(proratedRent)));
 
   const optionalRents = {
     PRORATED_PARKING: parking,
@@ -67,25 +67,25 @@ export default async function handler(
     PRORATED_PET_RENT: petRent,
   }
 
-  let moveInAmountDue = proratedRent;
+  let moveInAmountDue: number = proratedRent;
   Object.entries(optionalRents).forEach(([key, monthlyRent]) => {
     if (monthlyRent) {
-      const proratedRent = round(prorateAmount * monthlyRent);
+      const proratedRent = prorateAmount * monthlyRent;
       moveInAmountDue += proratedRent;
-      newStream = newStream.pipe(replace(key, proratedRent));
+      newStream = newStream.pipe(replace(key, formatAmount(proratedRent)));
     } else {
       newStream = newStream.pipe(replace(key, "N/A"));
     }
   });
 
   moveInAmountDue += petFee || 0;
-  newStream = newStream.pipe(replace("PET_FEE", petFee || "N/A"));
+  newStream = newStream.pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"));
 
   moveInAmountDue += property.admin_fee || 0;
-  newStream = newStream.pipe(replace("ADMIN_FEE", property.admin_fee || "N/A"));
+  newStream = newStream.pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"));
 
   newStream = newStream
-    .pipe(replace("MOVEIN_AMOUNT_DUE", round(moveInAmountDue)))
+    .pipe(replace("MOVEIN_AMOUNT_DUE", formatAmount(moveInAmountDue)))
     .pipe(replace("CUSTOM_TEXT", property.custom_text || ""))
     .pipe(replace("CONCESSIONS", concessions || ""));
 

@@ -104,7 +104,7 @@ export default function PropertyForm(props: PropertyFormProps) {
 
       <Button type="submit">
         Save
-        {props.loading && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
+        {props.loading && <Spinner style={{ marginLeft: "10px" }} as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
       </Button>
 
     </Form>
