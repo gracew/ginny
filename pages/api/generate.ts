@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { requireSession, RequireSessionProp } from "@clerk/clerk-sdk-node";
 import { Storage } from "@google-cloud/storage";
 import fs from "fs";
 import JSZip from 'jszip';
@@ -8,6 +9,7 @@ import os from "os";
 import path from "path";
 import replace from "string-replace-stream";
 import { v4 as uuidv4 } from "uuid";
+import { client } from "./client";
 
 function formatAmount(x: number) {
   return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(x);
@@ -20,8 +22,8 @@ type Data = {
 const gcs = new Storage();
 const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
-export default async function handler(
-  req: NextApiRequest,
+async function handler(
+  req: RequireSessionProp<NextApiRequest>,
   res: NextApiResponse<Data>
 ) {
   // download template from GCS
@@ -35,9 +37,10 @@ export default async function handler(
     return;
   }
 
+  const { property, ...otherInputs } = req.body;
   const {
-    property, aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
-  } = req.body;
+    aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
+  } = otherInputs;
 
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
@@ -56,7 +59,7 @@ export default async function handler(
     .pipe(replace("LEASE_TERM", `${leaseTermMonths} months`))
     .pipe(replace("APPLICATION_FEE", property.application_fee ? formatAmount(property.application_fee) : "N/A"))
     .pipe(replace("RESERVATION_FEE", property.reservation_fee ? formatAmount(property.reservation_fee) : "N/A"))
-    .pipe(replace("APPLICATION_AMOUNT_DUE", applicationAmountDue ? formatAmount(applicationAmountDue) :  "N/A"))
+    .pipe(replace("APPLICATION_AMOUNT_DUE", applicationAmountDue ? formatAmount(applicationAmountDue) : "N/A"))
     .pipe(replace("FIRST_MONTH_DATES", `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`))
     .pipe(replace("PRORATED_RENT", formatAmount(proratedRent)));
 
@@ -95,8 +98,18 @@ export default async function handler(
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))
     .on("finish", async function () {
-      await gcs.bucket("bmi-templates").upload(outPath, { destination: "out/" + outFileName });
       // upload to GCS
+      await gcs.bucket("bmi-templates").upload(outPath, { destination: "out/" + outFileName });
+      // save event to postgres
+      const query = "insert into generate_events(property_id, user_id, filename, data) values ($1, $2, $3, $4)";
+      await client.query(query, [
+        property.id,
+        req.session.userId,
+        outFileName,
+        otherInputs,
+      ]);
       res.status(200).json({ downloadUrl: 'https://storage.googleapis.com/bmi-templates/out/' + outFileName })
     })
 }
+
+export default requireSession(handler);
