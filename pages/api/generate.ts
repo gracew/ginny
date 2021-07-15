@@ -18,7 +18,7 @@ type Data = {
 }
 
 const gcs = new Storage();
-const templateFilename = "reservation_agreement_template_2021-07-13.docx";
+const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
 export default async function handler(
   req: NextApiRequest,
