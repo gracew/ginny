@@ -10,7 +10,7 @@ import replace from "string-replace-stream";
 import { v4 as uuidv4 } from "uuid";
 
 function formatAmount(x: number) {
-  return new Intl.NumberFormat("en-US").format(x);
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(x);
 }
 
 type Data = {
