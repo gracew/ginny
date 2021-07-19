@@ -12,13 +12,18 @@ Local dev:
 ```bash
 docker-compose up -d
 ```
-3. (One-time) Initialize the postgres container
+3. Install postgres
+4. (One-time) Initialize the postgres container
 ```bash
 PGPASSWORD=postgres psql -h localhost -U postgres -f ./scripts/users.sql -f ./scripts/properties.sql -f ./scripts/generate_events.sql
 ```
-4. Run the development server:
+5. Run yarn:
 ```bash
-yarn dev
+yarn
+```
+6. Run the development server:
+```bash
+PGHOST=localhost PGUSER=postgres PGPASSWORD=postgres yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
