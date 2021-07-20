@@ -23,9 +23,8 @@ const gcs = new Storage();
 const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
 function docxName(propertyName:string, unitNumber:string, date:string): string{
-  let temp : string = propertyName + "-" + unitNumber + "-" +date
-  let newName: string = temp.trim().replace(/ /g, "-")
-  return newName
+  const name = propertyName + "-" + unitNumber + "-" +date
+  return name.trim().replace(/ /g, "-")
 
 }
 
