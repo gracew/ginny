@@ -12,7 +12,7 @@ export default function GNavbar() {
     <Navbar bg="light" className={styles.navbar}>
       <Navbar.Brand>
         <Button variant="link" onClick={() => router.push("/")} className={styles.logoButton}>
-          <Image src="/g.png" alt="Ginny Logo" width={35} height={35} />
+          <Image src="/ginny.png" alt="Ginny Logo" width={100} height={35} />
         </Button>
       </Navbar.Brand>
       <Navbar.Toggle />
