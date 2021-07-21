@@ -8,7 +8,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import os from "os";
 import path from "path";
 import replace from "string-replace-stream";
-import { v4 as uuidv4 } from "uuid";
 import { client } from "./client";
 
 function formatAmount(x: number) {
@@ -22,10 +21,9 @@ type Data = {
 const gcs = new Storage();
 const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
-function docxName(propertyName:string, unitNumber:string, date:string): string{
+export function docxName(propertyName:string, unitNumber:string, date:string): string{
   const name = propertyName + "-" + unitNumber + "-" +date
   return name.trim().replace(/ /g, "-")
-
 }
 
 async function handler(
