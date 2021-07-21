@@ -8,6 +8,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import os from "os";
 import path from "path";
 import replace from "string-replace-stream";
+import { v4 as uuidv4 } from "uuid";
 import { client } from "./client";
 
 function formatAmount(x: number) {
@@ -21,9 +22,10 @@ type Data = {
 const gcs = new Storage();
 const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
-export function docxName(propertyName:string, unitNumber:string, date:string): string{
-  const name = propertyName + "-" + unitNumber + "-" +date
+function docxName(propertyName:string, unitNumber:string): string{
+  const name = propertyName + "-" + unitNumber + "-" + moment().format("YYYY-MM-DD-X")
   return name.trim().replace(/ /g, "-")
+
 }
 
 async function handler(
@@ -97,7 +99,7 @@ async function handler(
     .pipe(replace("CONCESSIONS", concessions || ""));
 
   zip.file("word/document.xml", newStream);
-  const outFileName = docxName(property.address, aptNo, moveInDate) + ".docx";
+  const outFileName = docxName(property.address, aptNo) + ".docx";
   const outPath = path.join(os.tmpdir(), outFileName);
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))

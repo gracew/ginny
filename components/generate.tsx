@@ -139,7 +139,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
           Generate!
           {loading && <Spinner style={{ marginLeft: "10px" }} as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
         </Button>
-        {downloadUrl && <Button className={styles.downloadButton} href={downloadUrl} variant="success"><Download /></Button>}
+        {!loading && downloadUrl && <Button className={styles.downloadButton} href={downloadUrl} variant="success"><Download /></Button>}
       </Form>
 
     </div>
