@@ -22,10 +22,9 @@ type Data = {
 const gcs = new Storage();
 const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
-function docxName(propertyName:string, unitNumber:string): string{
-  const name = propertyName + "-" + unitNumber + "-" + moment().format("YYYY-MM-DD-X")
+export function docxName(propertyName:string, unitNumber:string, currentMoment: moment.Moment): string{
+  const name = propertyName + "-" + unitNumber + "-" + currentMoment.format("YYYY-MM-DD-X")
   return name.trim().replace(/ /g, "-")
-
 }
 
 async function handler(
@@ -99,7 +98,7 @@ async function handler(
     .pipe(replace("CONCESSIONS", concessions || ""));
 
   zip.file("word/document.xml", newStream);
-  const outFileName = docxName(property.address, aptNo) + ".docx";
+  const outFileName = docxName(property.address, aptNo, moment()) + ".docx";
   const outPath = path.join(os.tmpdir(), outFileName);
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))
