@@ -16,7 +16,7 @@ async function handler(
     return;
   }
 
-  const query = "update properties set address = $1, city = $2, state = $3, zip = $4, application_fee = $5, reservation_fee = $6, admin_fee = $7, parking_fee = $8, pet_fee = $9, custom_text = $10 where id = $11";
+  const query = "update properties set address = $1, city = $2, state = $3, zip = $4, application_fee = $5, reservation_fee = $6, admin_fee = $7, trash_fee = $8, custom_text = $9 where id = $10";
   await client.query(query, [
     req.body.address,
     req.body.city,
@@ -25,8 +25,7 @@ async function handler(
     req.body.application_fee,
     req.body.reservation_fee,
     req.body.admin_fee,
-    req.body.parking_fee,
-    req.body.pet_fee,
+    req.body.trash_fee,
     req.body.custom_text,
     req.body.id,
   ]);
