@@ -28,9 +28,6 @@ export function docxName(propertyName:string, unitNumber:string, currentMoment: 
 }
 
 export function addNewLine(customText:string){
-  if (customText == ""){
-    return null;
-  }
   return customText.replace(/\n/g,"<w:br/>")
 }
 

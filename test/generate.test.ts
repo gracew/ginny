@@ -7,9 +7,11 @@ it("generated doc name", () => {
   const currentMomentFormatted = currentMoment.format("YYYY-MM-DD-X");
   expect(docxName("     100 Market St", "A1", currentMoment)).toEqual("100-Market-St-A1-" + currentMomentFormatted);
   expect(docxName("     100 Market St      ", "    A1     ", currentMoment)).toEqual("100-Market-St-A1-" + currentMomentFormatted);
+  expect(docxName("  \r   100 Market St\t      ", "    A1\n     ", currentMoment)).toEqual("100-Market-St-A1-" + currentMomentFormatted);
   expect(docxName("100 Market St", "A1", currentMoment)).toEqual("100-Market-St-A1-" + currentMomentFormatted);
   expect(docxName("100MarketSt", "A1", currentMoment)).toEqual("100MarketSt-A1-" + currentMomentFormatted);
   expect(addNewLine("Hello\nworld\n")).toEqual("Hello<w:br/>world<w:br/>")
   expect(addNewLine("Hello\nworld\nfoo\nbar")).toEqual("Hello<w:br/>world<w:br/>foo<w:br/>bar")
-
+  expect(addNewLine("")).toEqual("")
+  expect(addNewLine("\t")).toEqual("\t")
 });
