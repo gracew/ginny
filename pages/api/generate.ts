@@ -31,7 +31,7 @@ export function addNewLine(customText:string){
   if (customText == ""){
     return null;
   }
-  return customText.replace(/\n/g,"</w:t><w:br><w:t>")
+  return customText.replace(/\n/g,"<w:br/>")
 }
 
 async function handler(
@@ -95,7 +95,6 @@ async function handler(
 
   moveInAmountDue += petFee || 0;
   newStream = newStream.pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"));
-
   moveInAmountDue += property.admin_fee || 0;
   newStream = newStream.pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"));
 
