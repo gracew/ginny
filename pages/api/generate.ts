@@ -23,8 +23,12 @@ const gcs = new Storage();
 const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
 export function docxName(propertyName:string, unitNumber:string, currentMoment: moment.Moment): string{
-  const name = propertyName + "-" + unitNumber + "-" + currentMoment.format("YYYY-MM-DD-X")
-  return name.trim().replace(/ /g, "-")
+  const name = propertyName.trim() + "-" + unitNumber.trim() + "-" + currentMoment.format("YYYY-MM-DD-X")
+  return name.replace(/ /g, "-")
+}
+
+export function createLineBreak(customText:string){
+  return customText.replace(/\n/g,"<w:br/>")
 }
 
 async function handler(
@@ -88,13 +92,12 @@ async function handler(
 
   moveInAmountDue += petFee || 0;
   newStream = newStream.pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"));
-
   moveInAmountDue += property.admin_fee || 0;
   newStream = newStream.pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"));
 
   newStream = newStream
     .pipe(replace("MOVEIN_AMOUNT_DUE", formatAmount(moveInAmountDue)))
-    .pipe(replace("CUSTOM_TEXT", property.custom_text || ""))
+    .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text) || ""))
     .pipe(replace("CONCESSIONS", concessions || ""));
 
   zip.file("word/document.xml", newStream);
