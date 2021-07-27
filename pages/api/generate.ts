@@ -24,10 +24,10 @@ const templateFilename = "reservation_agreement_template_2021-07-14.docx";
 
 export function docxName(propertyName:string, unitNumber:string, currentMoment: moment.Moment): string{
   const name = propertyName.trim() + "-" + unitNumber.trim() + "-" + currentMoment.format("YYYY-MM-DD-X")
-  return name.trim().replace(/ /g, "-")
+  return name.replace(/ /g, "-")
 }
 
-export function addNewLine(customText:string){
+export function createLineBreak(customText:string){
   return customText.replace(/\n/g,"<w:br/>")
 }
 
@@ -97,7 +97,7 @@ async function handler(
 
   newStream = newStream
     .pipe(replace("MOVEIN_AMOUNT_DUE", formatAmount(moveInAmountDue)))
-    .pipe(replace("CUSTOM_TEXT", addNewLine(property.custom_text) || ""))
+    .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text) || ""))
     .pipe(replace("CONCESSIONS", concessions || ""));
 
   zip.file("word/document.xml", newStream);
