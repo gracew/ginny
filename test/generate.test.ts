@@ -29,7 +29,7 @@ it("Calculating total amount",() =>{
     custom_text: "Hello"
   }
 
-  const d = new Date();
+  const d = new Date(2021,7,27);
 
   const data = {
     property: property,
@@ -44,5 +44,7 @@ it("Calculating total amount",() =>{
     concessions: ""
   }
   const totals = computeTotals(data)
-  
+  expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
+  expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
+  expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
 });

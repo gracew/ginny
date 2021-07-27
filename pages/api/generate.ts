@@ -60,9 +60,10 @@ export function computeTotals(data: any): Totals {
 
   // TODO: actually calculate the totals
 
-  const moveInAmount = (petFee || 0) + proratedRent + (property.admin_fee || 0);
+  let moveInAmount = proratedRent
+  moveInAmount += (petFee || 0) + (property.admin_fee || 0) + prorateAmount*(property.trash_fee + storage + petRent + parking);
   const firstMonthDates = `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`;
-  
+
   return {
     FIRST_MONTH_DATES: firstMonthDates,
     amounts: {
