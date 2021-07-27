@@ -43,8 +43,20 @@ it("Calculating total amount",() =>{
     petFee: 25, 
     concessions: ""
   }
-  const totals = computeTotals(data)
+  let totals = computeTotals(data)
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
   expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
+
+  data.petFee = 0;
+  data.parking = 0;
+  data.storage = 0;
+  data.petRent = 0;
+  property.admin_fee = 50;
+
+  totals = computeTotals(data)
+  expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(150)
+  expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
+  expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("32.26")
+
 });
