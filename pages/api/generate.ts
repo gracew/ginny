@@ -30,15 +30,18 @@ export function createLineBreak(customText: string) {
   return customText.replace(/\n/g, "<w:br/>")
 }
 
-interface Totals {
+interface Amounts {
   APPLICATION_AMOUNT_DUE: number;
   MOVE_IN_AMOUNT_DUE: number;
   PRORATED_RENT: number;
-  PRORATED_PARKINGG: number;
+  PRORATED_PARKING: number;
   PRORATED_STORAGE: number;
   PRORATED_TRASH: number;
   PRORATED_PET_RENT: number;
+}
+interface Totals {
   FIRST_MONTH_DATES: string;
+  amounts: Amounts;
 }
 
 export function computeTotals(data: any): Totals {
@@ -57,15 +60,20 @@ export function computeTotals(data: any): Totals {
 
   // TODO: actually calculate the totals
 
+  const moveInAmount = (petFee || 0) + proratedRent + (property.admin_fee || 0);
+  const firstMonthDates = `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`;
+  
   return {
-    APPLICATION_AMOUNT_DUE: 0,
-    MOVE_IN_AMOUNT_DUE: 0,
-    PRORATED_RENT: 0,
-    PRORATED_PARKINGG: 0,
-    PRORATED_STORAGE: 0,
-    PRORATED_TRASH: 0,
-    PRORATED_PET_RENT: 0,
-    FIRST_MONTH_DATES: "",
+    FIRST_MONTH_DATES: firstMonthDates,
+    amounts: {
+    APPLICATION_AMOUNT_DUE: applicationAmountDue,
+    MOVE_IN_AMOUNT_DUE: moveInAmount,
+    PRORATED_RENT: proratedRent,
+    PRORATED_PARKING: parking,
+    PRORATED_STORAGE: storage,
+    PRORATED_TRASH: property.trash_fee,
+    PRORATED_PET_RENT: petRent,
+    }
   }
 }
 
