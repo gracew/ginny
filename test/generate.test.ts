@@ -43,21 +43,38 @@ it("Calculating total amount",() =>{
     petFee: 25, 
     concessions: ""
   }
-  let totals = computeTotals(data)
+  const totals = computeTotals(data)
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
   expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
+});
 
-  data.petFee = 0;
-  data.parking = 0;
-  data.storage = 0;
-  data.petRent = 0;
-  property.trash_fee =0;
-  property.admin_fee = 50;
+it("Calculate total when extra fees are zero",() =>{
+  const property = {
+    address: "Address",
+    application_fee: 100,
+    reservation_fee: 100,
+    admin_fee: 50,
+    trash_fee: 0,
+    custom_text: "Hello"
+  }
 
-  totals = computeTotals(data)
+  const d = new Date(2021,7,27);
+
+  const data = {
+    property: property,
+    aptNo: "A1", 
+    leaseTermMonths: 12, 
+    moveInDate: d, 
+    monthlyRent: 200, 
+    parking: 0, 
+    storage: 0, 
+    petRent: 0, 
+    petFee: 0, 
+    concessions: ""
+  }
+  const totals = computeTotals(data)
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
   expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("82.26")
-
 });
