@@ -103,10 +103,10 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         <Form.Group>
           <Form.Label>
             Number of Applicants
-            <select>
-              <option value = "1" > 1 </option>
-              <option value = "2" > 2 </option>
-            </select>
+            <Form.Control as="select">
+              <option value = "1"> 1 </option>
+              <option value = "2"> 2 </option>
+            </Form.Control>
           </Form.Label>
         </Form.Group>
 
