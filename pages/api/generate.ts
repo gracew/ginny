@@ -32,7 +32,7 @@ export function createLineBreak(customText: string) {
 
 interface Amounts {
   APPLICATION_AMOUNT_DUE: number;
-  MOVE_IN_AMOUNT_DUE: number;
+  MOVEIN_AMOUNT_DUE: number;
   PRORATED_RENT: number;
   PRORATED_PARKING: number;
   PRORATED_STORAGE: number;
@@ -58,22 +58,24 @@ export function computeTotals(data: any): Totals {
     ? (property.application_fee || 0) + (property.reservation_fee || 0)
     : undefined;
 
-  // TODO: actually calculate the totals
-
-  let moveInAmount = proratedRent
-  moveInAmount += (petFee || 0) + (property.admin_fee || 0) + prorateAmount*(property.trash_fee + storage + petRent + parking);
+  const proratedParking = prorateAmount * parking
+  const proratedTrash = prorateAmount * property.trash_fee
+  const proratedStorage = prorateAmount * storage
+  const proratedPetRent = prorateAmount * petRent
+  let moveInAmountDue = proratedRent
+  moveInAmountDue += (petFee || 0) + (property.admin_fee || 0) + proratedTrash + proratedParking + proratedStorage + proratedPetRent;
   const firstMonthDates = `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`;
 
   return {
     FIRST_MONTH_DATES: firstMonthDates,
     amounts: {
     APPLICATION_AMOUNT_DUE: applicationAmountDue,
-    MOVE_IN_AMOUNT_DUE: moveInAmount,
+    MOVEIN_AMOUNT_DUE: moveInAmountDue,
     PRORATED_RENT: proratedRent,
-    PRORATED_PARKING: parking,
-    PRORATED_STORAGE: storage,
+    PRORATED_PARKING: proratedParking,
+    PRORATED_STORAGE: proratedStorage,
     PRORATED_TRASH: property.trash_fee,
-    PRORATED_PET_RENT: petRent,
+    PRORATED_PET_RENT: proratedPetRent,
     }
   }
 }
@@ -111,9 +113,10 @@ async function handler(
     .pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"))
     .pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"))
     .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text) || ""))
-    .pipe(replace("CONCESSIONS", concessions || ""));
+    .pipe(replace("CONCESSIONS", concessions || ""))
+    .pipe(replace("FIRST_MONTH_DATES", totals.FIRST_MONTH_DATES));
 
-  Object.entries(totals).forEach(([key, monthlyRent]) => {
+  Object.entries(totals.amounts).forEach(([key, monthlyRent]) => {
     if (monthlyRent) {
       newStream = newStream.pipe(replace(key, formatAmount(monthlyRent)));
     } else {

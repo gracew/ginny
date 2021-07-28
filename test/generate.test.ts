@@ -46,7 +46,7 @@ it("Calculating total amount",() =>{
   const totals = computeTotals(data)
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
-  expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
+  expect(totals.amounts.MOVEIN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
 });
 
 it("Calculate total when extra fees are zero",() =>{
@@ -76,5 +76,5 @@ it("Calculate total when extra fees are zero",() =>{
   const totals = computeTotals(data)
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
-  expect(totals.amounts.MOVE_IN_AMOUNT_DUE.toFixed(2)).toEqual("82.26")
+  expect(totals.amounts.MOVEIN_AMOUNT_DUE.toFixed(2)).toEqual("82.26")
 });
