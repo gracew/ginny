@@ -101,6 +101,16 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         </Form.Group>
 
         <Form.Group>
+          <Form.Label>
+            Number of Applicants
+            <select>
+              <option value = "1" > 1 </option>
+              <option value = "2" > 2 </option>
+            </select>
+          </Form.Label>
+        </Form.Group>
+
+        <Form.Group>
           <Form.Label>Monthly Rent</Form.Label>
           <DollarInput required value={monthlyRent} setValue={setMonthlyRent} />
         </Form.Group>
