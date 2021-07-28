@@ -74,7 +74,7 @@ export function computeTotals(data: any): Totals {
     PRORATED_RENT: proratedRent,
     PRORATED_PARKING: proratedParking,
     PRORATED_STORAGE: proratedStorage,
-    PRORATED_TRASH: property.trash_fee,
+    PRORATED_TRASH: proratedTrash,
     PRORATED_PET_RENT: proratedPetRent,
     }
   }

@@ -46,6 +46,10 @@ it("Calculating total amount",() =>{
   const totals = computeTotals(data)
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
+  expect(totals.amounts.PRORATED_PARKING.toFixed(2)).toEqual("3.23")
+  expect(totals.amounts.PRORATED_PET_RENT.toFixed(2)).toEqual("1.61")
+  expect(totals.amounts.PRORATED_TRASH.toFixed(2)).toEqual("1.61")
+  expect(totals.amounts.PRORATED_STORAGE.toFixed(2)).toEqual("2.42")
   expect(totals.amounts.MOVEIN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
 });
 
