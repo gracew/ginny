@@ -16,6 +16,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
   const [leaseTermMonths, setLeaseTermMonths] = useState<number | undefined>(12);
   const [moveInDate, setMoveInDate] = useState(moment().format("yyyy-MM-DD"));
 
+  const [numApplicants, setNumApplicants] = useState("1")  
   const [monthlyRent, setMonthlyRent] = useState("");
   const [parking, setParking] = useState("");
   const [storage, setStorage] = useState("");
@@ -47,7 +48,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         method: 'post',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          property, aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
+          property, aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, parking, storage, petRent, petFee, concessions
         }),
       })
       const parsed = await res.json();
@@ -101,13 +102,11 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>
-            Number of Applicants
-            <Form.Control as="select">
-              <option value = "1"> 1 </option>
-              <option value = "2"> 2 </option>
-            </Form.Control>
-          </Form.Label>
+          <Form.Label>Number of Applicants</Form.Label>
+          <Form.Control as="select" onChange={e => setNumApplicants(e.target.value)}>
+            <option value = "1"> 1 </option>
+            <option value = "2"> 2 </option>
+          </Form.Control>
         </Form.Group>
 
         <Form.Group>
