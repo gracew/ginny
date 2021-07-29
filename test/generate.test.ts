@@ -36,6 +36,7 @@ it("Calculating total amount",() =>{
     aptNo: "A1", 
     leaseTermMonths: 12, 
     moveInDate: d, 
+    numApplicants: 1,
     monthlyRent: 200, 
     parking: 20, 
     storage: 15, 
@@ -70,6 +71,7 @@ it("Calculate total when extra fees are zero",() =>{
     aptNo: "A1", 
     leaseTermMonths: 12, 
     moveInDate: d, 
+    numApplicants: 1,
     monthlyRent: 200, 
     parking: 0, 
     storage: 0, 
@@ -81,4 +83,34 @@ it("Calculate total when extra fees are zero",() =>{
   expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(200)
   expect(totals.amounts.PRORATED_RENT.toFixed(2)).toEqual("32.26")
   expect(totals.amounts.MOVEIN_AMOUNT_DUE.toFixed(2)).toEqual("82.26")
+});
+
+it("Calculating multiple applicants",() =>{
+  const property = {
+    address: "Address",
+    application_fee: 150,
+    reservation_fee: 0,
+    admin_fee: 100,
+    trash_fee: 10,
+    custom_text: "Hello"
+  }
+
+  const d = new Date(2021,7,27);
+
+  const data = {
+    property: property,
+    aptNo: "A1", 
+    leaseTermMonths: 12, 
+    moveInDate: d,
+    numApplicants: 2, 
+    monthlyRent: 200, 
+    parking: 20, 
+    storage: 15, 
+    petRent: 10, 
+    petFee: 25, 
+    concessions: ""
+  }
+  const totals = computeTotals(data)
+  expect(totals.amounts.APPLICATION_AMOUNT_DUE).toEqual(300)
+
 });

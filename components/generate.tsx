@@ -16,7 +16,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
   const [leaseTermMonths, setLeaseTermMonths] = useState<number | undefined>(12);
   const [moveInDate, setMoveInDate] = useState(moment().format("yyyy-MM-DD"));
 
-  const [numApplicants, setNumApplicants] = useState("1")  
+  const [numApplicants, setNumApplicants] = useState(1)  
   const [monthlyRent, setMonthlyRent] = useState("");
   const [parking, setParking] = useState("");
   const [storage, setStorage] = useState("");
@@ -103,7 +103,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
 
         <Form.Group>
           <Form.Label>Number of Applicants</Form.Label>
-          <Form.Control as="select" onChange={e => setNumApplicants(e.target.value)}>
+          <Form.Control as="select" onChange={e => setNumApplicants(Number(e.target.value))}>
             <option value = "1"> 1 </option>
             <option value = "2"> 2 </option>
           </Form.Control>

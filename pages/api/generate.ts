@@ -55,7 +55,7 @@ export function computeTotals(data: any): Totals {
   const proratedRent = prorateAmount * monthlyRent;
 
   const applicationAmountDue = property.application_fee || property.reservation_fee
-    ? (property.application_fee || 0) + (property.reservation_fee || 0)
+    ? (numApplicants*property.application_fee || 0) + (property.reservation_fee || 0)
     : undefined;
 
   const proratedParking = prorateAmount * parking
