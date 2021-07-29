@@ -10,6 +10,7 @@ CREATE TABLE properties (
     reservation_fee decimal,
     admin_fee decimal,
     trash_fee decimal,
-    custom_text text
+    custom_text text,
+    logo_url text
 );
 CREATE INDEX idx_properties_user_id ON properties (user_id);

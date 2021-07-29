@@ -8,6 +8,8 @@ export default function NewProperty() {
 
   const [property, setProperty] = useState({});
 
+  const [file, setFile] = useState<File>();
+
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +21,7 @@ export default function NewProperty() {
       setValidated(true);
     } else {
       setLoading(true);
+      //TODO: Upload file to Google cloud storage
       await fetch("/api/addProperty", {
         method: 'post',
         headers: { 'content-type': 'application/json' },
@@ -38,6 +41,7 @@ export default function NewProperty() {
           property={property}
           update={(u: Partial<Property>) => setProperty({ ...property, ...u })}
           loading={loading}
+          logoHandler={setFile}
           validated={validated}
           handleSubmit={handleSubmit}
         />

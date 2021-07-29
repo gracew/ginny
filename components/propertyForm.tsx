@@ -5,6 +5,7 @@ import DollarInput from './dollarInput';
 
 export interface Property {
   id?: string;
+  logo_url?: File;
   address?: string;
   city?: string;
   state?: string;
@@ -19,6 +20,7 @@ export interface Property {
 interface PropertyFormProps {
   property: Property;
   update: (u: Partial<Property>) => void;
+  logoHandler: (f: File) => void;
   loading: boolean;
   validated: boolean;
   handleSubmit: (e: any) => void;
@@ -32,7 +34,8 @@ export default function PropertyForm(props: PropertyFormProps) {
       <h4>Logo</h4>
       <Form.Group controlId="formFile" className="mb-3">
         <Form.Label>Upload an image</Form.Label>
-        <Form.Control type="file"/>
+        <Form.Control type="file" 
+        onChange={(e:any) => props.update({logo_url: e.target.files[0]})}/>
       </Form.Group>
       <h4>Location</h4>
       <Form.Group>

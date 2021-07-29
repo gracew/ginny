@@ -8,6 +8,7 @@ export default function EditProperty() {
   const router = useRouter();
   const { id } = router.query;
 
+  const [file, setFile] = useState<File>();
   const [property, setProperty] = useState<Property>();
 
   const [validated, setValidated] = useState(false);
@@ -59,6 +60,7 @@ export default function EditProperty() {
           <PropertyForm
             property={property}
             update={(u: Partial<Property>) => setProperty({ ...property, ...u })}
+            logoHandler={setFile}
             loading={loading}
             validated={validated}
             handleSubmit={handleSubmit}
