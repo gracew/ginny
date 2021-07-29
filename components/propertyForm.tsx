@@ -1,9 +1,12 @@
 import { useRouter } from 'next/dist/client/router';
+import { loadGetInitialProps } from 'next/dist/next-server/lib/utils';
 import React from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
+import { from } from 'svix/dist/openapi/rxjsStub';
 import DollarInput from './dollarInput';
 
 export interface Property {
+  logo?:string;
   id?: string;
   address?: string;
   city?: string;
@@ -29,6 +32,11 @@ export default function PropertyForm(props: PropertyFormProps) {
 
   return (
     <Form noValidate validated={props.validated} onSubmit={props.handleSubmit}>
+      <h4>Logo</h4>
+      <Form.Group controlId="formFile" className="mb-3">
+        <Form.Label>Upload an image</Form.Label>
+        <Form.Control type="file"/>
+      </Form.Group>
       <h4>Location</h4>
       <Form.Group>
         <Form.Label>Street Address</Form.Label>
