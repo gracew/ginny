@@ -47,7 +47,7 @@ interface Totals {
 export function computeTotals(data: any): Totals {
   const { property, ...otherInputs } = data;
   const {
-    aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
+    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, parking, storage, petRent, petFee, concessions
   } = otherInputs;
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
@@ -55,7 +55,7 @@ export function computeTotals(data: any): Totals {
   const proratedRent = prorateAmount * monthlyRent;
 
   const applicationAmountDue = property.application_fee || property.reservation_fee
-    ? (property.application_fee || 0) + (property.reservation_fee || 0)
+    ? (numApplicants*property.application_fee || 0) + (property.reservation_fee || 0)
     : undefined;
 
   const proratedParking = prorateAmount * parking
