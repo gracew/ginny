@@ -19,7 +19,7 @@ type Data = {
 }
 
 const gcs = new Storage();
-const templateFilename = "reservation_agreement_template_2021-07-14.docx";
+const templateFilename = "reservation_agreement_template_2021-08-02.docx";
 
 export function docxName(propertyName: string, unitNumber: string, currentMoment: moment.Moment): string {
   const name = propertyName.trim() + "-" + unitNumber.trim() + "-" + currentMoment.format("YYYY-MM-DD-X")
