@@ -31,7 +31,8 @@ export function createLineBreak(customText: string) {
 }
 
 export function createInternalRelation(rId:string, image_name:string):string{
-  return `<Relationship Id=${rId} Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${image_name}”/>`
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${image_name}"/></Relationships>”/>`
 }
 
 export function getImageMarkUp(rId:string){
@@ -133,7 +134,7 @@ async function handler(
     }
   });
 
-  
+  //TODO: Write a check for if the user did not pass an image
   const logo_url = "d4fbd7c860fa82499cd0e58a55d92fa8.png" //req.body.property.logo_url;
   const imagePath = path.join(os.tmpdir(), logo_url)
   await gcs.bucket("bmi-templates").file(logo_url).download({ destination: imagePath})
@@ -145,9 +146,16 @@ async function handler(
   const outFileName = docxName(property.address, aptNo, moment()) + ".docx";
   const outPath = path.join(os.tmpdir(), outFileName);
   
-  //TODO: Write a check for if the user did not pass an image
+  //TODO: Write a check for if media is not null
   const media = zip.folder("media");
-  media.file(logo_url, imagePath);
+  media?.file(logo_url, imagePath);
+
+  var headerXml = zip.file('word/header1.xml')
+  let newStream2 = headerXml?.nodeStream()
+    .pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/></w:p></w:hdr>',imageMarkup))
+  zip.file("word/header1.xml", newStream2)
+
+  var relationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
 
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))
