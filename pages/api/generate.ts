@@ -150,10 +150,10 @@ async function handler(
   const media = zip.folder("media");
   media?.file(logo_url, imagePath);
 
-  var headerXml = zip.file('word/header1.xml')
+  var headerXml = zip.file('word/header2.xml')
   let newStream2 = headerXml?.nodeStream()
     .pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/></w:p></w:hdr>',imageMarkup))
-  zip.file("word/header1.xml", newStream2)
+  zip.file("word/header2.xml", newStream2)
 
   var relationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
 
