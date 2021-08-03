@@ -31,12 +31,11 @@ export function createLineBreak(customText: string) {
 }
 
 export function createInternalRelation(rId:string, image_name:string):string{
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-  <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${image_name}"/></Relationships>”/>`
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${image_name}"/></Relationships>”/>`
 }
 
 export function getImageMarkUp(rId:string){
-  return `<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" wp14:anchorId="2D210949" wp14:editId="6501C070"><wp:extent cx="466725" cy="476250"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="884817327" name="Picture 884817327"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name=""/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed=${rId}><a:extLst><a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}"><a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/></a:ext></a:extLst></a:blip><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="466725" cy="476250"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing>`
+  return `<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" wp14:anchorId="2D210949" wp14:editId="6501C070"><wp:extent cx="466725" cy="476250"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="884817327" name="Picture 884817327"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name=""/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rId}"><a:extLst><a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}"><a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/></a:ext></a:extLst></a:blip><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="466725" cy="476250"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing>`
 }
 
 interface Amounts {
@@ -146,16 +145,20 @@ async function handler(
   const outFileName = docxName(property.address, aptNo, moment()) + ".docx";
   const outPath = path.join(os.tmpdir(), outFileName);
   
-  //TODO: Write a check for if media is not null
-  const media = zip.folder("media");
-  media?.file(logo_url, imagePath);
+  const media = zip.folder("word/media");
+  media?.file(logo_url, fs.readFileSync(imagePath),{binary:true});
 
   var headerXml = zip.file('word/header1.xml')
   let newStream2 = headerXml?.nodeStream()
-    .pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/></w:p></w:hdr>',imageMarkup))
+    .pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/>',imageMarkup))
   zip.file("word/header1.xml", newStream2)
 
-  var relationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
+  var relationXml = zip.file("_rels/.rels")
+  let newStream3 = relationXml?.nodeStream()
+    .pipe(replace("</Relationships>",`<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${logo_url}"/></Relationships>”/>`))
+    zip.file("_rels/.rels", newStream3)
+
+  var internalRelationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
 
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))

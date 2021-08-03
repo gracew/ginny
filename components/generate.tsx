@@ -92,7 +92,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Lease Term (months)</Form.Label>
+          <Form.Label>Lease Term (Months)</Form.Label>
           <Form.Control
             required
             type="number"
