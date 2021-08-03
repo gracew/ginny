@@ -34,8 +34,8 @@ export default function PropertyForm(props: PropertyFormProps) {
       <h4>Logo</h4>
       <Form.Group controlId="formFile" className="mb-3">
         <Form.Label>Upload an image</Form.Label>
-        <Form.Control type="file" accept = "image/*"
-        onChange={(e:any) => props.update({logo_url: e.target.files[0]})}/>
+        <Form.Control type="file" 
+        onChange={(e:any) => props.logoHandler(e.target.files[0])}/>
       </Form.Group>
       <h4>Location</h4>
       <Form.Group>

@@ -1,5 +1,6 @@
 import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
+import * as uuid from "uuid";
 import PropertyForm, { Property } from '../../components/propertyForm';
 import styles from '../../styles/Home.module.css';
 
@@ -21,11 +22,19 @@ export default function NewProperty() {
       setValidated(true);
     } else {
       setLoading(true);
-      //TODO: Upload file to Google cloud storage
+      let logo_url;
+      if (file) {
+        // upload file to GCS: https://cloud.google.com/storage/docs/json_api/v1/objects/insert
+        logo_url = `logos/${uuid.v4()}`;
+        const res = await fetch("https://storage.googleapis.com/upload/storage/v1/b/bmi-templates/o?uploadType=media&name=" + logo_url, {
+          method: 'post',
+          body: file
+        });
+      }
       await fetch("/api/addProperty", {
         method: 'post',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(property),
+        body: JSON.stringify({ ...property, logo_url }),
       });
       setLoading(false);
       router.push("/");

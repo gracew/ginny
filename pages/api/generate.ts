@@ -134,7 +134,7 @@ async function handler(
   });
 
   //TODO: Write a check for if the user did not pass an image
-  const logo_url = "d4fbd7c860fa82499cd0e58a55d92fa8.png" //req.body.property.logo_url;
+  const logo_url = req.body.property.logo_url;
   const imagePath = path.join(os.tmpdir(), logo_url)
   await gcs.bucket("bmi-templates").file(logo_url).download({ destination: imagePath})
   const rId = "rAC5927DL" // this rID can be anything as long as the first character is 'r'
