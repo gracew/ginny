@@ -133,7 +133,7 @@ async function handler(
     }
   });
 
-  if (property.logo_url != ""){
+  if (property.logo_url){
     const rId = "rAC5927DL" // this rID can be anything as long as the first character is 'r'
     const imageMarkup = getImageMarkUp(rId);
     const logo_url = req.body.property.logo_url;
@@ -144,13 +144,13 @@ async function handler(
     const media = zip.folder("word/media");
     media?.file(logo_url, fs.readFileSync(imagePath),{binary:true});
 
-    var headerXml = zip.file('word/header1.xml')
+    const headerXml = zip.file('word/header1.xml')
     zip.file("word/header1.xml", headerXml?.nodeStream().pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/>', imageMarkup)))
 
-    var relationXml = zip.file("_rels/.rels")
+    const relationXml = zip.file("_rels/.rels")
     zip.file("_rels/.rels", relationXml?.nodeStream().pipe(replace("</Relationships>",`<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${logo_url}"/></Relationships>”/>`)))
 
-    var internalRelationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
+    zip.file("word/_rels/header1.xml.rels", internalRelation)
   }
 
   zip.file("word/document.xml", newStream);

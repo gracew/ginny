@@ -9,7 +9,7 @@ export default function NewProperty() {
 
   const [property, setProperty] = useState({});
 
-  const [file, setFile] = useState<File>();
+  const [image, setImage] = useState<File>();
 
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,12 +23,12 @@ export default function NewProperty() {
     } else {
       setLoading(true);
       let logo_url;
-      if (file) {
+      if (image) {
         // upload file to GCS: https://cloud.google.com/storage/docs/json_api/v1/objects/insert
         logo_url = `logos/${uuid.v4()}`;
         const res = await fetch("https://storage.googleapis.com/upload/storage/v1/b/bmi-templates/o?uploadType=media&name=" + logo_url, {
           method: 'post',
-          body: file
+          body: image
         });
       }
       await fetch("/api/addProperty", {
@@ -50,7 +50,7 @@ export default function NewProperty() {
           property={property}
           update={(u: Partial<Property>) => setProperty({ ...property, ...u })}
           loading={loading}
-          logoHandler={setFile}
+          logoHandler={setImage}
           validated={validated}
           handleSubmit={handleSubmit}
         />

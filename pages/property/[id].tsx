@@ -75,7 +75,7 @@ export default function EditProperty() {
             validated={validated}
             handleSubmit={handleSubmit}
           />
-
+          
           <div>
             <Button className={styles.deleteButton} onClick={() => setShowDeleteModal(true)} variant="outline-danger">
               Delete
