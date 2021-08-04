@@ -9,7 +9,7 @@ export default function EditProperty() {
   const router = useRouter();
   const { id } = router.query;
 
-  const [file, setFile] = useState<File>();
+  const [image, setImage] = useState<File>();
   const [property, setProperty] = useState<Property>();
 
   const [validated, setValidated] = useState(false);
@@ -33,12 +33,12 @@ export default function EditProperty() {
     } else {
       setLoading(true);
       let logo_url;
-      if (file) {
+      if (image) {
         // upload file to GCS: https://cloud.google.com/storage/docs/json_api/v1/objects/insert
         logo_url = `logos/${uuid.v4()}`;
         const res = await fetch("https://storage.googleapis.com/upload/storage/v1/b/bmi-templates/o?uploadType=media&name=" + logo_url, {
           method: 'post',
-          body: file
+          body: image
         });
       }
       await fetch("/api/editProperty", {
@@ -70,7 +70,7 @@ export default function EditProperty() {
           <PropertyForm
             property={property}
             update={(u: Partial<Property>) => setProperty({ ...property, ...u })}
-            logoHandler={setFile}
+            logoHandler={setImage}
             loading={loading}
             validated={validated}
             handleSubmit={handleSubmit}

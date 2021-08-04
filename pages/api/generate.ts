@@ -133,32 +133,29 @@ async function handler(
     }
   });
 
-  //TODO: Write a check for if the user did not pass an image
-  const logo_url = req.body.property.logo_url;
-  const imagePath = path.join(os.tmpdir(), logo_url)
-  await gcs.bucket("bmi-templates").file(logo_url).download({ destination: imagePath})
-  const rId = "rAC5927DL" // this rID can be anything as long as the first character is 'r'
-  const internalRelation = createInternalRelation(rId, logo_url);
-  const imageMarkup = getImageMarkUp(rId);
+  if (property.logo_url != ""){
+    const rId = "rAC5927DL" // this rID can be anything as long as the first character is 'r'
+    const imageMarkup = getImageMarkUp(rId);
+    const logo_url = req.body.property.logo_url;
+    const imagePath = path.join(os.tmpdir(), logo_url)
+    await gcs.bucket("bmi-templates").file(logo_url).download({ destination: imagePath})
+    const internalRelation = createInternalRelation(rId, logo_url);
+
+    const media = zip.folder("word/media");
+    media?.file(logo_url, fs.readFileSync(imagePath),{binary:true});
+
+    var headerXml = zip.file('word/header1.xml')
+    zip.file("word/header1.xml", headerXml?.nodeStream().pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/>', imageMarkup)))
+
+    var relationXml = zip.file("_rels/.rels")
+    zip.file("_rels/.rels", relationXml?.nodeStream().pipe(replace("</Relationships>",`<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${logo_url}"/></Relationships>”/>`)))
+
+    var internalRelationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
+  }
 
   zip.file("word/document.xml", newStream);
   const outFileName = docxName(property.address, aptNo, moment()) + ".docx";
   const outPath = path.join(os.tmpdir(), outFileName);
-  
-  const media = zip.folder("word/media");
-  media?.file(logo_url, fs.readFileSync(imagePath),{binary:true});
-
-  var headerXml = zip.file('word/header1.xml')
-  let newStream2 = headerXml?.nodeStream()
-    .pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/>',imageMarkup))
-  zip.file("word/header1.xml", newStream2)
-
-  var relationXml = zip.file("_rels/.rels")
-  let newStream3 = relationXml?.nodeStream()
-    .pipe(replace("</Relationships>",`<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${logo_url}"/></Relationships>”/>`))
-    zip.file("_rels/.rels", newStream3)
-
-  var internalRelationXml = zip.file("word/_rels/header1.xml.rels", internalRelation)
 
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))

@@ -33,8 +33,8 @@ export default function PropertyForm(props: PropertyFormProps) {
     <Form noValidate validated={props.validated} onSubmit={props.handleSubmit}>
       <h4>Logo</h4>
       <Form.Group controlId="formFile" className="mb-3">
-        <Form.Label>Upload an image</Form.Label>
-        <Form.Control type="file" 
+        <Form.Label>Upload an Image</Form.Label>
+        <Form.Control type="file" accept = "image/*"
         onChange={(e:any) => props.logoHandler(e.target.files[0])}/>
       </Form.Group>
       <h4>Location</h4>
