@@ -27,7 +27,7 @@ export function docxName(propertyName: string, unitNumber: string, currentMoment
 }
 
 export function createLineBreak(customText: string) {
-  return customText.replace(/\n/g, "<w:br/>")
+  return (customText ? customText.replace(/\n/g, "<w:br/>") : "");
 }
 
 export function createInternalRelation(rId:string, image_name:string):string{
