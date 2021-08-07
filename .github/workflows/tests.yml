@@ -14,4 +14,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: yarn
     - run: yarn jest
-    - run: yarn tsc
+    - run: yarn build
