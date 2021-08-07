@@ -22,7 +22,7 @@ export default function EditProperty() {
       setProperty(parsed.find((p: Property) => p.id === id));
       setLoading(false);
     });
-  }, [])
+  }, [id])
 
   async function handleSubmit(e: any) {
     const form = e.currentTarget;

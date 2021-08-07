@@ -1,7 +1,7 @@
-import { useRouter } from 'next/dist/client/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import styles from '../styles/PropertyForm.module.css';
+import Image from 'next/image';
 import DollarInput from './dollarInput';
 
 export interface Property {
@@ -32,14 +32,19 @@ export default function PropertyForm(props: PropertyFormProps) {
     <Form noValidate validated={props.validated} onSubmit={props.handleSubmit}>
       <h4>Logo</h4>
       <Form.Group controlId="formFile" className="mb-3">
-        {props.property.logo_url && <div>
-          <img src={"https://storage.googleapis.com/bmi-templates/"+props.property.logo_url} className={styles.logoImage}/>
+        {props.property.logo_url && <div className={styles.logoImage} >
+          <Image
+            src={"https://storage.googleapis.com/bmi-templates/" + props.property.logo_url}
+            alt="Logo image"
+            layout="fill"
+            objectFit="contain"
+          />
         </div>}
         <Form.Label>Upload an Image</Form.Label>
-        <Form.Control type="file" accept = "image/*"
-        onChange={(e:any) => {
-          props.logoHandler(e.target.files[0])
-          }}/>
+        <Form.Control type="file" accept="image/*"
+          onChange={(e: any) => {
+            props.logoHandler(e.target.files[0])
+          }} />
       </Form.Group>
 
       <h4>Location</h4>
