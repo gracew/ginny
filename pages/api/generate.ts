@@ -19,7 +19,7 @@ type Data = {
 }
 
 const gcs = new Storage();
-const templateFilename = "reservation_agreement_template_2021-07-14.docx";
+const templateFilename = "reservation_agreement_template_2021-08-02.docx";
 
 export function docxName(propertyName: string, unitNumber: string, currentMoment: moment.Moment): string {
   const name = propertyName.trim() + "-" + unitNumber.trim() + "-" + currentMoment.format("YYYY-MM-DD-X")
@@ -28,6 +28,14 @@ export function docxName(propertyName: string, unitNumber: string, currentMoment
 
 export function createLineBreak(customText: string) {
   return customText.replace(/\n/g, "<w:br/>")
+}
+
+export function createInternalRelation(rId:string, image_name:string):string{
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${image_name}"/></Relationships>”/>`
+}
+
+export function getImageMarkUp(rId:string){
+  return `<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" wp14:anchorId="2D210949" wp14:editId="6501C070"><wp:extent cx="466725" cy="476250"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="884817327" name="Picture 884817327"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name=""/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rId}"><a:extLst><a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}"><a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/></a:ext></a:extLst></a:blip><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="466725" cy="476250"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing>`
 }
 
 interface Amounts {
@@ -90,6 +98,7 @@ async function handler(
   const fileData = fs.readFileSync(tempPath);
   const zip = await JSZip.loadAsync(fileData);
   var xml = zip.file("word/document.xml")
+
   if (!xml) {
     res.status(500);
     return;
@@ -124,13 +133,35 @@ async function handler(
     }
   });
 
+  if (property.logo_url){
+    const rId = "rAC5927DL" // this rID can be anything as long as the first character is 'r'
+    const imageMarkup = getImageMarkUp(rId);
+    const logo_url = req.body.property.logo_url;
+    const imagePath = path.join(os.tmpdir(), logo_url)
+    await gcs.bucket("bmi-templates").file(logo_url).download({ destination: imagePath})
+    const internalRelation = createInternalRelation(rId, logo_url);
+
+    const media = zip.folder("word/media");
+    media?.file(logo_url, fs.readFileSync(imagePath),{binary:true});
+
+    const headerXml = zip.file('word/header1.xml')
+    zip.file("word/header1.xml", headerXml?.nodeStream().pipe(replace('<w:bookmarkStart w:id="0" w:name="LogoGoesHere"/><w:bookmarkEnd w:id="0"/>', imageMarkup)))
+
+    const relationXml = zip.file("_rels/.rels")
+    zip.file("_rels/.rels", relationXml?.nodeStream().pipe(replace("</Relationships>",`<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${logo_url}"/></Relationships>”/>`)))
+
+    zip.file("word/_rels/header1.xml.rels", internalRelation)
+  }
+
   zip.file("word/document.xml", newStream);
   const outFileName = docxName(property.address, aptNo, moment()) + ".docx";
   const outPath = path.join(os.tmpdir(), outFileName);
+
   zip.generateNodeStream()
     .pipe(fs.createWriteStream(outPath))
     .on("finish", async function () {
       // upload to GCS
+
       await gcs.bucket("bmi-templates").upload(outPath, { destination: "out/" + outFileName });
       // save event to postgres
       const query = "insert into generate_events(property_id, user_id, filename, data) values ($1, $2, $3, $4)";

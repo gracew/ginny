@@ -1,6 +1,7 @@
 import { useRouter } from 'next/dist/client/router';
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
+import * as uuid from "uuid";
 import PropertyForm, { Property } from '../../components/propertyForm';
 import styles from '../../styles/Home.module.css';
 
@@ -8,6 +9,7 @@ export default function EditProperty() {
   const router = useRouter();
   const { id } = router.query;
 
+  const [image, setImage] = useState<File>();
   const [property, setProperty] = useState<Property>();
 
   const [validated, setValidated] = useState(false);
@@ -20,7 +22,7 @@ export default function EditProperty() {
       setProperty(parsed.find((p: Property) => p.id === id));
       setLoading(false);
     });
-  }, [])
+  }, [id])
 
   async function handleSubmit(e: any) {
     const form = e.currentTarget;
@@ -30,10 +32,19 @@ export default function EditProperty() {
       setValidated(true);
     } else {
       setLoading(true);
+      let logo_url;
+      if (image) {
+        // upload file to GCS: https://cloud.google.com/storage/docs/json_api/v1/objects/insert
+        logo_url = `logos/${uuid.v4()}`;
+        const res = await fetch("https://storage.googleapis.com/upload/storage/v1/b/bmi-templates/o?uploadType=media&name=" + logo_url, {
+          method: 'post',
+          body: image
+        });
+      }
       await fetch("/api/editProperty", {
         method: 'post',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(property),
+        body: JSON.stringify({ ...property, logo_url }),
       });
       setLoading(false);
       router.push("/");
@@ -59,11 +70,12 @@ export default function EditProperty() {
           <PropertyForm
             property={property}
             update={(u: Partial<Property>) => setProperty({ ...property, ...u })}
+            logoHandler={setImage}
             loading={loading}
             validated={validated}
             handleSubmit={handleSubmit}
           />
-
+          
           <div>
             <Button className={styles.deleteButton} onClick={() => setShowDeleteModal(true)} variant="outline-danger">
               Delete
