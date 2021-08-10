@@ -46,7 +46,6 @@ export default function PropertyForm(props: PropertyFormProps) {
             props.logoHandler(e.target.files[0])
           }} />
       </Form.Group>
-
       <h4>Location</h4>
       <Form.Group>
         <Form.Label>Street Address</Form.Label>
