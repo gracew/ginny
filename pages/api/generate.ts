@@ -27,7 +27,7 @@ export function docxName(propertyName: string, unitNumber: string, currentMoment
 }
 
 export function createLineBreak(customText: string) {
-  return (customText ? customText.replace(/\n/g, "<w:br/>") : "");
+  return customText.replace(/\n/g, "<w:br/>");
 }
 
 export function createInternalRelation(rId:string, image_name:string):string{
@@ -121,7 +121,7 @@ async function handler(
     .pipe(replace("RESERVATION_FEE", property.reservation_fee ? formatAmount(property.reservation_fee) : "N/A"))
     .pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"))
     .pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"))
-    .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text) || ""))
+    .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text || "")))
     .pipe(replace("CONCESSIONS", concessions || ""))
     .pipe(replace("FIRST_MONTH_DATES", totals.FIRST_MONTH_DATES));
 

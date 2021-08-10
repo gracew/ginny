@@ -5,7 +5,7 @@ import Image from 'next/image';
 import DollarInput from './dollarInput';
 
 export interface Property {
-  logo?:string;
+  logo:string;
   id?: string;
   logo_url?: File;
   address?: string;
