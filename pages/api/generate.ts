@@ -19,7 +19,7 @@ type Data = {
 }
 
 const gcs = new Storage();
-const templateFilename = "reservation_agreement_template_2021-08-02.docx";
+const templateFilename = "reservation_agreement_template_2021-08-16.docx";
 
 export function docxName(propertyName: string, unitNumber: string, currentMoment: moment.Moment): string {
   const name = propertyName.trim() + "-" + unitNumber.trim() + "-" + currentMoment.format("YYYY-MM-DD-X")
@@ -55,7 +55,7 @@ interface Totals {
 export function computeTotals(data: any): Totals {
   const { property, ...otherInputs } = data;
   const {
-    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, parking, storage, petRent, petFee, concessions
+    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking, storage, petRent, petFee, concessions
   } = otherInputs;
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
@@ -106,7 +106,7 @@ async function handler(
 
   const { property, ...otherInputs } = req.body;
   const {
-    aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
+    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking, storage, petRent, petFee, concessions
   } = otherInputs;
   const totals = computeTotals(req.body);
 
@@ -121,6 +121,7 @@ async function handler(
     .pipe(replace("RESERVATION_FEE", property.reservation_fee ? formatAmount(property.reservation_fee) : "N/A"))
     .pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"))
     .pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"))
+    .pipe(replace("SECURITY_DEPOSIT", securityDeposit ? formatAmount(securityDeposit) : "N/A"))
     .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text || "")))
     .pipe(replace("CONCESSIONS", concessions || ""))
     .pipe(replace("FIRST_MONTH_DATES", totals.FIRST_MONTH_DATES));
