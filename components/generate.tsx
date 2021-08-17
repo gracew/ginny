@@ -49,7 +49,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         method: 'post',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          property, aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking: Number(parking), storage, petRent, petFee, concessions
+          property, aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent: Number(monthlyRent), securityDeposit: Number(securityDeposit), parking: Number(parking), storage: Number(storage), petRent: Number(petRent), petFee: Number(petFee), concessions
         }),
       })
       const parsed = await res.json();

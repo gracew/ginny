@@ -72,7 +72,7 @@ export function computeTotals(data: any): Totals {
   const proratedStorage = prorateAmount * storage
   const proratedPetRent = prorateAmount * petRent
   let moveInAmountDue = proratedRent
-  moveInAmountDue += (Number(petFee) || 0) + (Number(property.admin_fee) || 0) + Number(proratedTrash) + Number(proratedParking) + Number(proratedStorage) + Number(securityDeposit) + Number(proratedPetRent)
+  moveInAmountDue += (petFee || 0) + (property.admin_fee || 0) + proratedTrash + proratedParking + proratedStorage + securityDeposit + proratedPetRent
   const firstMonthDates = `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`;
 
   return {
