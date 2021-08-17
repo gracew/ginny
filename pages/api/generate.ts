@@ -58,7 +58,6 @@ export function computeTotals(data: any): Totals {
   const {
     aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking, storage, petRent, petFee, concessions
   } = otherInputs;
-  console.log(securityDeposit)
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
   const prorateAmount = (lastDayMonth.diff(moveInDateMoment, "days") + 1) / lastDayMonth.daysInMonth();
@@ -131,7 +130,6 @@ async function handler(
   Object.entries(totals.amounts).forEach(([key, monthlyRent]) => {
     if (monthlyRent) {
       newStream = newStream.pipe(replace(key, formatAmount(monthlyRent)));
-      //console.log(`${key}:${monthlyRent}`)
     } else {
       newStream = newStream.pipe(replace(key, "N/A"));
     }
