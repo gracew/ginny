@@ -139,7 +139,7 @@ async function handler(
     const rId = "rAC5927DL" // this rID can be anything as long as the first character is 'r'
     const imageMarkup = getImageMarkUp(rId);
     const logo_url = req.body.property.logo_url;
-    const imagePath = path.join(os.tmpdir(), logo_url)
+    const imagePath = path.join(os.tmpdir(), path.basename(logo_url))
     await gcs.bucket("bmi-templates").file(logo_url).download({ destination: imagePath})
     const internalRelation = createInternalRelation(rId, logo_url);
 
