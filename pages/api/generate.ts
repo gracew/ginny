@@ -41,6 +41,7 @@ export function getImageMarkUp(rId:string){
 interface Amounts {
   APPLICATION_AMOUNT_DUE: number;
   MOVEIN_AMOUNT_DUE: number;
+  SECURITY_DEPOSIT: number;
   PRORATED_RENT: number;
   PRORATED_PARKING: number;
   PRORATED_STORAGE: number;
@@ -57,6 +58,7 @@ export function computeTotals(data: any): Totals {
   const {
     aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking, storage, petRent, petFee, concessions
   } = otherInputs;
+  console.log(securityDeposit)
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
   const prorateAmount = (lastDayMonth.diff(moveInDateMoment, "days") + 1) / lastDayMonth.daysInMonth();
@@ -71,7 +73,8 @@ export function computeTotals(data: any): Totals {
   const proratedStorage = prorateAmount * storage
   const proratedPetRent = prorateAmount * petRent
   let moveInAmountDue = proratedRent
-  moveInAmountDue += (petFee || 0) + (property.admin_fee || 0) + proratedTrash + proratedParking + proratedStorage + proratedPetRent;
+  moveInAmountDue += (petFee || 0) + (property.admin_fee || 0) + proratedTrash + proratedParking + proratedStorage + securityDeposit + proratedPetRent;
+  console.log(moveInAmountDue)
   const firstMonthDates = `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`;
 
   return {
@@ -79,6 +82,7 @@ export function computeTotals(data: any): Totals {
     amounts: {
     APPLICATION_AMOUNT_DUE: applicationAmountDue,
     MOVEIN_AMOUNT_DUE: moveInAmountDue,
+    SECURITY_DEPOSIT: securityDeposit,
     PRORATED_RENT: proratedRent,
     PRORATED_PARKING: proratedParking,
     PRORATED_STORAGE: proratedStorage,
@@ -121,7 +125,6 @@ async function handler(
     .pipe(replace("RESERVATION_FEE", property.reservation_fee ? formatAmount(property.reservation_fee) : "N/A"))
     .pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"))
     .pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"))
-    .pipe(replace("SECURITY_DEPOSIT", securityDeposit ? formatAmount(securityDeposit) : "N/A"))
     .pipe(replace("CUSTOM_TEXT", createLineBreak(property.custom_text || "")))
     .pipe(replace("CONCESSIONS", concessions || ""))
     .pipe(replace("FIRST_MONTH_DATES", totals.FIRST_MONTH_DATES));
@@ -129,6 +132,7 @@ async function handler(
   Object.entries(totals.amounts).forEach(([key, monthlyRent]) => {
     if (monthlyRent) {
       newStream = newStream.pipe(replace(key, formatAmount(monthlyRent)));
+      //console.log(`${key}:${monthlyRent}`)
     } else {
       newStream = newStream.pipe(replace(key, "N/A"));
     }

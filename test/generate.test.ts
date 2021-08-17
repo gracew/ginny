@@ -39,7 +39,8 @@ it("Calculating total amount",() =>{
     numApplicants: 1,
     monthlyRent: 200, 
     parking: 20, 
-    storage: 15, 
+    storage: 15,
+    securityDeposit: 100, 
     petRent: 10, 
     petFee: 25, 
     concessions: ""
@@ -51,8 +52,9 @@ it("Calculating total amount",() =>{
   expect(totals.amounts.PRORATED_PET_RENT.toFixed(2)).toEqual("1.61")
   expect(totals.amounts.PRORATED_TRASH.toFixed(2)).toEqual("1.61")
   expect(totals.amounts.PRORATED_STORAGE.toFixed(2)).toEqual("2.42")
-  expect(totals.amounts.MOVEIN_AMOUNT_DUE.toFixed(2)).toEqual("166.13")
+  expect(totals.amounts.MOVEIN_AMOUNT_DUE.toFixed(2)).toEqual("266.13")
 });
+
 
 it("Calculate total when extra fees are zero",() =>{
   const property = {
@@ -74,6 +76,7 @@ it("Calculate total when extra fees are zero",() =>{
     numApplicants: 1,
     monthlyRent: 200, 
     parking: 0, 
+    securityDeposit: 0,
     storage: 0, 
     petRent: 0, 
     petFee: 0, 
