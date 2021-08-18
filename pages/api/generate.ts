@@ -19,7 +19,7 @@ type Data = {
 }
 
 const gcs = new Storage();
-const templateFilename = "reservation_agreement_template_2021-08-02.docx";
+const templateFilename = "reservation_agreement_template_2021-08-16.docx";
 
 export function docxName(propertyName: string, unitNumber: string, currentMoment: moment.Moment): string {
   const name = propertyName.trim() + "-" + unitNumber.trim() + "-" + currentMoment.format("YYYY-MM-DD-X")
@@ -41,6 +41,7 @@ export function getImageMarkUp(rId:string){
 interface Amounts {
   APPLICATION_AMOUNT_DUE: number;
   MOVEIN_AMOUNT_DUE: number;
+  SECURITY_DEPOSIT: number;
   PRORATED_RENT: number;
   PRORATED_PARKING: number;
   PRORATED_STORAGE: number;
@@ -55,7 +56,7 @@ interface Totals {
 export function computeTotals(data: any): Totals {
   const { property, ...otherInputs } = data;
   const {
-    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, parking, storage, petRent, petFee, concessions
+    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking, storage, petRent, petFee, concessions
   } = otherInputs;
   const moveInDateMoment = moment(moveInDate);
   const lastDayMonth = moveInDateMoment.clone().endOf("month");
@@ -71,7 +72,7 @@ export function computeTotals(data: any): Totals {
   const proratedStorage = prorateAmount * storage
   const proratedPetRent = prorateAmount * petRent
   let moveInAmountDue = proratedRent
-  moveInAmountDue += (petFee || 0) + (property.admin_fee || 0) + proratedTrash + proratedParking + proratedStorage + proratedPetRent;
+  moveInAmountDue += (petFee || 0) + (property.admin_fee || 0) + proratedTrash + proratedParking + proratedStorage + securityDeposit + proratedPetRent
   const firstMonthDates = `${moveInDateMoment.format("MM/DD/YYYY")} - ${lastDayMonth.format("MM/DD/YYYY")}`;
 
   return {
@@ -79,6 +80,7 @@ export function computeTotals(data: any): Totals {
     amounts: {
     APPLICATION_AMOUNT_DUE: applicationAmountDue,
     MOVEIN_AMOUNT_DUE: moveInAmountDue,
+    SECURITY_DEPOSIT: securityDeposit,
     PRORATED_RENT: proratedRent,
     PRORATED_PARKING: proratedParking,
     PRORATED_STORAGE: proratedStorage,
@@ -106,7 +108,7 @@ async function handler(
 
   const { property, ...otherInputs } = req.body;
   const {
-    aptNo, leaseTermMonths, moveInDate, monthlyRent, parking, storage, petRent, petFee, concessions
+    aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, securityDeposit, parking, storage, petRent, petFee, concessions
   } = otherInputs;
   const totals = computeTotals(req.body);
 

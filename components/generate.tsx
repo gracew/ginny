@@ -18,6 +18,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
 
   const [numApplicants, setNumApplicants] = useState(1)  
   const [monthlyRent, setMonthlyRent] = useState("");
+  const [securityDeposit, setSecurityDeposit] = useState("")
   const [parking, setParking] = useState("");
   const [storage, setStorage] = useState("");
   const [petRent, setPetRent] = useState("");
@@ -48,7 +49,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         method: 'post',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          property, aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent, parking, storage, petRent, petFee, concessions
+          property, aptNo, leaseTermMonths, moveInDate, numApplicants, monthlyRent: Number(monthlyRent), securityDeposit: Number(securityDeposit), parking: Number(parking), storage: Number(storage), petRent: Number(petRent), petFee: Number(petFee), concessions
         }),
       })
       const parsed = await res.json();
@@ -115,6 +116,11 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
         <Form.Group>
           <Form.Label>Monthly Rent</Form.Label>
           <DollarInput required value={monthlyRent} setValue={setMonthlyRent} />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Security Deposit</Form.Label>
+          <DollarInput value={securityDeposit} setValue={setSecurityDeposit} />
         </Form.Group>
 
         <Form.Group>
