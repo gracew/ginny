@@ -120,7 +120,7 @@ export default function GenerateReservationAgreement(props: GenerateReservationA
 
         <Form.Group>
           <Form.Label>Security Deposit</Form.Label>
-          <DollarInput required value={securityDeposit} setValue={setSecurityDeposit} />
+          <DollarInput value={securityDeposit} setValue={setSecurityDeposit} />
         </Form.Group>
 
         <Form.Group>
