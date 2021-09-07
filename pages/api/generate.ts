@@ -119,7 +119,7 @@ async function handler(
     .pipe(replace("APT_NO", aptNo))
     .pipe(replace("MONTHLY_RENT", formatAmount(monthlyRent)))
     .pipe(replace("LEASE_TERM", `${leaseTermMonths} months`))
-    .pipe(replace("APPLICATION_FEE", property.application_fee ? formatAmount(property.application_fee) : "N/A"))
+    .pipe(replace("APPLICATION_FEE", property.application_fee ? formatAmount(numApplicants * property.application_fee) : "N/A"))
     .pipe(replace("RESERVATION_FEE", property.reservation_fee ? formatAmount(property.reservation_fee) : "N/A"))
     .pipe(replace("PET_FEE", petFee ? formatAmount(petFee) : "N/A"))
     .pipe(replace("ADMIN_FEE", property.admin_fee ? formatAmount(property.admin_fee) : "N/A"))
